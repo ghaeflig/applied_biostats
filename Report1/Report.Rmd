@@ -16,10 +16,10 @@ params:
   figwidth: 5
 ---
 ```{r, setup, include=FALSE}
-# HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installat
+# HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installation.html
 # https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html
 
-# IMPORTANT: you must run this line in your console: tinytex::install_tinytex()ion.html
+# IMPORTANT: you must run this line in your console: tinytex::install_tinytex()
 
 #check that you have pandoc installed
 #rmarkdown::find_pandoc()
