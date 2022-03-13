@@ -1,0 +1,81 @@
+---
+title: "Report 1: We need a good name for this"
+output: 
+  pdf_document:
+    latex_engine: pdflatex
+geometry: 
+  - margin=2.5cm
+papersize: a4
+header-includes:
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhead[L]{Report 1}
+  - \fancyhead[R]{Monney, Haefliger, Franca, Ferrisse}
+fontsize: 12pt
+params:
+  figwidth: 5
+---
+```{r, setup, include=FALSE}
+# HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installat
+# https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html
+
+# IMPORTANT: you must run this line in your console: tinytex::install_tinytex()ion.html
+
+#check that you have pandoc installed
+#rmarkdown::find_pandoc()
+```
+
+```{=latex}
+\thispagestyle{fancy}
+```
+```{r, include=FALSE}
+library(ggplot2)
+library(png)
+library(knitr)
+```
+
+
+
+
+
+
+
+
+
+
+# Introduction/background
+This is some text to test the template. 
+
+## Figure with caption
+```{r, echo=FALSE, fig.width=params$figwidth, fig.cap = "Caption goes here"}
+ggplot(cars, aes(speed, dist)) + geom_point()
+```
+
+## Equations with value replacement:
+```{r, echo=FALSE}
+# set variables
+
+set.seed(1)
+values <- sample(10:100, sample(3:5))/10
+lv <- length(values)
+avg <- sum(values)/lv
+```
+
+\begin{center}
+The average of values is 
+$\hat{v} = \frac{`r paste(values, collapse=" + ")`}{`r lv`} = `r round(avg, 3)`$.
+\end{center}
+
+## Table (directly from R)
+We can also use the default Latex tables, if we are in a latex code chunk (same as R code chunk, with =latex instead of r --> see the latex code chunk above)
+```{r, echo=FALSE}
+kable(mtcars[1:5,], caption="A wonderful table.")
+
+```
+
+
+# Exploratory data analysis
+# Model fitting
+# Model assessment
+# Final estimated model
+# Conclusions
