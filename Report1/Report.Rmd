@@ -1,7 +1,28 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output: 
+  pdf_document:
+    latex_engine: pdflatex
+geometry: 
+  - margin=2.5cm
+papersize: a4
+header-includes:
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhead[L]{Report 1}
+  - \fancyhead[R]{Monney, Haefliger, Franca, Ferrisse}
+fontsize: 12pt
 ---
+```{r, setup, include=FALSE}
+# HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installat
+# https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html
+
+# IMPORTANT: you must run this line in your console: tinytex::install_tinytex()ion.html
+
+#check that you have pandoc installed
+#rmarkdown::find_pandoc()
+```
+# Test title
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
@@ -17,3 +38,8 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
+#More text
+
+#More text
+
+Let's write something
