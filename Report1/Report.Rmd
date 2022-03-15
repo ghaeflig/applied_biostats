@@ -40,9 +40,13 @@ library(knitr)
 
 # Exploratory data analysis
 ```{r, include=FALSE}
+#loading the data with assigned names
 library(readr)
 colnames <- c("airline","flight_length", "plane_speed", "daily_flight_time", "pop_served", "tot_op_cost", "rev_tons_miles", "ton_mile_lf", "cap", "tot_assets", "investments", "adj_assets", "column_to_remove")
 data <- data.frame(read_table("airline_costs.dat", col_names=colnames))
+
+#deal with spaces in companies' names 
+#(e.g. "All American" took 2 columns instead of 1)
 data[13,1] <- paste(data[13,1],data[13,2], sep=" ")
 data[26,1] <- paste(data[26,1],data[26,2], sep=" ")
 data[1,1] <- paste(data[1,1],data[1,2], sep=" ")
@@ -51,6 +55,8 @@ for (i in 2:12){
   data[26,i] <- data[26,i+1]
   data[1,i] <- data[1,i+1]
 }
+
+#remove the last column, which is meaningless
 data <- data[,1:12]
 ```
 
