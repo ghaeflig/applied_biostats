@@ -129,6 +129,23 @@ pairs(log(data))
 ```
 It seems to have more correlation when taking the log of the data ; more straight lines
 
+```{r, fig.width=10, fig.height =10}
+#Numerical part
+
+#install.packages("Hmisc")
+library("Hmisc")
+#install.packages("corrplot")
+library(corrplot)
+#Numerical
+data_cor <- cor(data)
+#rcor <- rcorr(as.matrix(data))
+corrplot(data_cor)
+
+data_cor_log <- cor(log(data))
+#rcor <- rcorr(as.matrix(log(data))
+corrplot(data_cor_log)
+```
+These plots image the correlation values between each feature. Indeed, log data show higher correlation values. (For numerical part of criteria)
 
 ```{r}
 library(ggplot2)
@@ -183,17 +200,59 @@ for (i in 1:ncol(data_log)) {
   #abline(hmod)
   #plot(hmod, which = 1) 
 ```
-With no log transformation : Cap, tot_asets, investments, adj_assets are not significant enough at the level alpha=0.5 to reject the null hyp
+With no log transformation : Cap (je vois pour pop_served mais cap ok), tot_asets, investments, adj_assets are not significant enough at the level alpha=0.5 to reject the null hyp
 With log transformation : all is significant (reject the null)
 
 
+## Linear fit with all features
 ```{r}
+cost_formula <-  data$tot_op_cost ~ data$flight_length + data$plane_speed + data$daily_flight_time + data$pop_served + data$rev_tons_miles + data$ton_mile_lf + data$cap + data$tot_assets + data$investments + data$adj_assets
+cost.lm <- lm(cost_formula, data=data)
+summary(cost.lm)
+
+cost_formula <-  data_log$tot_op_cost ~ data_log$flight_length + data_log$plane_speed + data_log$daily_flight_time + data_log$pop_served + data_log$rev_tons_miles + data_log$ton_mile_lf + data_log$cap + data_log$tot_assets + data_log$investments + data_log$adj_assets
+cost.lm_log <- lm(cost_formula, data=data)
+summary(cost.lm_log)
 
 ```
+Response for log data:
+According to the summary, the equation is the following: 
+
+log(Total_op_cost) = 7.3089 + 0.3186 * log(flight_length) - 0.9256 * log(plane_speed) - 0.1610 * log(daily_flight_time) + 0.0325 * log(pop_served) - 14.9353 * log(rev_tons_miles) + 13.8425 * log(ton_mile_lf) +14.2694 * log(cap) - 0.3059 * log(tot_assets) - 0.0043 * log(investments) + 0.3528 * log(adj_assets)
+
+$R^2 = 0.973$ and $adjusted R^2 = 0.9595$ that are high results. 
+
+According to the hypotheses ($H_0: \beta_0 = ... = \beta_9 = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is rejected. 
+
+##5. Model assessment 
+
+```{r}
+#layout(matrix(1:6,ncol=3))
+#plot(cost.lm, which = c(1,2,3,4,5,6) )   #bad results !!
+
+#log data
+layout(matrix(1:6,ncol=3))
+plot(cost.lm_log, which = c(1,2,3,4,5,6) )
 
 
+```
+Assumptions (from report criteria):
+1. errors have mean 0
+2. errors are homoscedastic (same variance)
+3. errors are uncorrelated
+4. errors are normally distributed
+
+FOR LOG DATA: 
+Normal QQ plot shows that absolute values of standardized residuals reach approximately 3 at most, and that no particular deviation from theoretical normal distribution (data follow the theoretical straight line). 
+
+From Residuals vs. fitted plot, we can observe that residuals are spread around a horizontal line at approx. 0. No non-linear relation are present in the model. 
+
+Scale-location allows to observe homoscedasticity. Until fitted value 5, the points are randomly spread and the line is horizontal which affirms the homoscedasticity. After 5, there is some variances, however in a general view the line is quite horizontal. 
+
+Residuals vs. leverage allows to identify potential influencor outliers. We can observe that NorthEast and lake central are out of the cook distance (cook's distance higher than 1 (cook's distance plot)) and have influence on the regression.
 
 
+https://data.library.virginia.edu/diagnostic-plots/ (explication comment interpréter les graphs)
 
 # Introduction/background
 This is some text to test the template. 
