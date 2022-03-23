@@ -18,9 +18,7 @@ params:
 ```{r, setup, include=FALSE}
 # HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installation.html
 # https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html
-
 # IMPORTANT: you must run this line in your console: tinytex::install_tinytex()
-
 #check that you have pandoc installed
 #rmarkdown::find_pandoc()
 ```
@@ -28,51 +26,26 @@ params:
 ```{=latex}
 \thispagestyle{fancy}
 ```
+
 ```{r, include=FALSE}
 library(ggplot2)
 library(png)
 library(knitr)
+library(readr)
 ```
+
+# Introduction/background
 
 
 
 
 
 # Exploratory data analysis
-```{r, include=FALSE}
-#loading the data with assigned names
-#library(readr)
-#colnames <- c("airline","flight_length", "plane_speed", "daily_flight_time", "pop_served", "tot_op_cost", "rev_tons_miles", "ton_mile_lf", "cap", "tot_assets", "investments", "adj_assets", "column_to_remove")
-#data <- data.frame(read_table("airline_costs.dat", col_names=colnames))
-
-#deal with spaces in companies' names 
-#(e.g. "All American" took 2 columns instead of 1)
-#data[13,1] <- paste(data[13,1],data[13,2], sep=" ")
-#data[26,1] <- paste(data[26,1],data[26,2], sep=" ")
-#data[1,1] <- paste(data[1,1],data[1,2], sep=" ")
-#for (i in 2:12){
-  #data[13,i] <- data[13,i+1]
-  #data[26,i] <- data[26,i+1]
-  #data[1,i] <- data[1,i+1]
-#}
-
-#remove the last column, which is meaningless
-#data <- data[,1:12]
-```
-
-
-
 
 ```{r, include=FALSE}
-library(readr)
-
 data <- read.delim("airline_costs.dat", header=FALSE, sep="")
 colnames <- c("airline","flight_length", "plane_speed", "daily_flight_time", "pop_served", "tot_op_cost", "rev_tons_miles", "ton_mile_lf", "cap", "tot_assets", "investments", "adj_assets")
 colnames(data) <- colnames
-```
-
-
-```{r, include=FALSE}
 ncol(data)
 nrow(data)
 for (i in 1:ncol(data)) print(typeof(data[,i]))
@@ -80,7 +53,6 @@ data_ <- data[,2:ncol(data)] #jsp s'il faut mettre la premiere col en rownames ?
 rownames(data_) <- data[,1]
 data <- data_
 summary(data)
-
 ```
 data 31 x 12
 type of the columns = character, integer or double
@@ -88,130 +60,85 @@ y = column 5
 column 1 = rownames
 --> matrix X of 31x10 with one y 31x1
 
-```{r, fig.width=7, fig.height =10}
-library(stringr)
-
-par(mfrow=c(4,3)) 
-for (i in 1:ncol(data)) {
-  #if (typeof(data[,i]) != 'character') 
-  hist(data[,i], main= str_glue('Histogram of {colnames(data)[i]}'), xlab= colnames(data)[i], freq = FALSE)
-}
-
-par(mfrow=c(4,3)) 
-for (i in 1:ncol(data)) {
-  #if (typeof(data[,i]) != 'character') 
-  hist(log(data[,i]), main= str_glue('Histogram of {colnames(data)[i]}'), xlab= colnames(data)[i], freq = FALSE)
-}
-
-```
 
 
-```{r,fig.width=10, fig.height =10}
-library(stringr)
-par(mfrow=c(3,4)) 
-for (i in 1:ncol(data)) {
-  #if (typeof(data[,i]) != 'character') 
-  boxplot(data[,i], main= str_glue('Boxplot of {colnames(data)[i]}'), xlab= colnames(data)[i])
-}
+## Univariate graphical
 
-par(mfrow=c(3,4)) 
-for (i in 1:ncol(data)) {
-  #if (typeof(data[,i]) != 'character') 
-  boxplot(log(data[,i]), main= str_glue('Boxplot of {colnames(data)[i]}'), xlab= colnames(data)[i])
-}
+```{r, fig.width=10, fig.height =5, echo=FALSE}
+par(mfrow=c(1,2), mar=(c(6,4.1,4.1,2.1))) 
+boxplot(data, las=2, main='Boxplots of the data')
+boxplot(log(data), las=2, main='Boxplots of the log of the data')
 
 ```
 Taking the log can be useful because many differences of amplitudes regarding of the columns ???
 
-```{r, fig.width=10, fig.height =10}
-pairs(data)
-pairs(log(data))
+Take the log of the data
+```{r, include=FALSE}
+data_log <- log(data)
+data_log[,7] <- data[,7]
 ```
-It seems to have more correlation when taking the log of the data ; more straight lines
 
-```{r, fig.width=10, fig.height =10}
+
+## Univariate numerical
+
+```{r, echo=FALSE}
+summary_table <- data.frame()
+meantable <- round(mean(data_log[,1]),2)
+sdtable <- round(sd(data_log[,1]),2)
+madtable <- round(mad(data_log[,1]),2)
+for (i in 2:ncol(data_log)){
+  meantable<- c(meantable,round(mean(data_log[,i]),2))
+  sdtable <- c(sdtable,round(sd(data_log[,i]),2))
+  madtable <- c(madtable,round(mad(data_log[,i]),2))
+}
+
+summary_table <- rbind(summary_table, meantable)
+summary_table <- rbind(summary_table, sdtable)
+summary_table <- rbind(summary_table, madtable)
+names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available capacity", "Total assets", "Investments and special funds", "Adjusted assets")
+rownames(summary_table) <- c("Mean", "SD", "MAD")
+kable(summary_table[,1:5],align='cccccc') 
+kable(summary_table[,6:11],align='ccccccc')
+```
+
+## Bivariate numerical (correlations)
+
+```{r, fig.width=5, fig.height =5, echo=FALSE, message=FALSE, warning=FALSE}
 #Numerical part
 
 #install.packages("Hmisc")
-library("Hmisc")
+library(Hmisc)
 #install.packages("corrplot")
 library(corrplot)
 #Numerical
-data_cor <- cor(data)
+#data_cor <- cor(data)
 #rcor <- rcorr(as.matrix(data))
-corrplot(data_cor)
+#corrplot(data_cor)
 
-data_cor_log <- cor(log(data))
+data_cor_log <- cor(data_log)
 #rcor <- rcorr(as.matrix(log(data))
 corrplot(data_cor_log)
 ```
 These plots image the correlation values between each feature. Indeed, log data show higher correlation values. (For numerical part of criteria)
 
-```{r}
-library(ggplot2)
-datax<-data[,-which(names(data) %in% c("tot_op_cost"))]   #enlever le y                                       
-pca <- prcomp(datax, scale = T)
-ggplot(data.frame(pca$x),aes( x=PC1,y=PC2, label=rownames(data)))+geom_point()+geom_text(hjust=0.5, vjust=-0.6, size=3)
+## Bivariate graphical
 
-data_log <- log(data)
-datax_log<-data_log[,-which(names(data_log) %in% c("tot_op_cost"))]   #enlever le y                                       
-pca <- prcomp(datax_log, scale = T)
-ggplot(data.frame(pca$x),aes( x=PC1,y=PC2, label=rownames(data_log)))+geom_point()+geom_text(hjust=0.5, vjust=-0.6, size=3)
-
+```{r, fig.width=7, fig.height =7, echo=FALSE}
+pairs(data_log)
 ```
-With not log data : We can almost see clusters. One upper right
+It seems to have more correlation when taking the log of the data ; more straight lines
 
 
+# Model fitting
 
-# Univariate linear fit
-Regression relating Operating Costs per revenue ton-mile --> data$tot_op_cost
-to 7 factors: length of flight, speed of plane, daily flight time per aircraft,
-population served, ton-mile load factor, available tons per aircraft mile,
-and firms net assets. Regression based on natural logarithms of all
-factors, except load factor. Load factor and available tons (capacity)
-for Northeast Airlines was imputed from summary calculations.
+```{r, include=FALSE}
+#cost_formula <-  data$tot_op_cost ~ data$flight_length + data$plane_speed + data$daily_flight_time + data$pop_served + data$rev_tons_miles + data$ton_mile_lf + data$cap + data$tot_assets + data$investments + data$adj_assets
+#cost.lm <- lm(cost_formula, data=data)
+#summary(cost.lm)
 
-So data$top_op_cost=y 
-
-
-```{r}
-#datax <- data[,-which(names(data) %in% c("tot_op_cost"))]
-#ncol(datax)
-
-for (i in 1:ncol(data)) {
-  if (i != 5) {
-    lm_data <- lm(data$tot_op_cost ~ data[,i], data=data)
-    print(paste0('Summary of tot_op_cost ~ : ', colnames(data)[i]))
-    print(summary(lm_data))
-  }
-}
-
-data_log <- log(data)
-for (i in 1:ncol(data_log)) {
-  if (i != 5) {
-    lm_data <- lm(data_log$tot_op_cost ~ data_log[,i], data=data_log)
-    print(paste0('Summary of tot_op_cost ~ : ', colnames(data_log)[i]))
-    print(summary(lm_data))
-  }
-}
-
-  #layout(matrix(1:2,ncol=2))
-  #plot(y ~ x, data = hubble)
-  #abline(hmod)
-  #plot(hmod, which = 1) 
-```
-With no log transformation : Cap (je vois pour pop_served mais cap ok), tot_asets, investments, adj_assets are not significant enough at the level alpha=0.5 to reject the null hyp
-With log transformation : all is significant (reject the null)
-
-
-## Linear fit with all features
-```{r}
-cost_formula <-  data$tot_op_cost ~ data$flight_length + data$plane_speed + data$daily_flight_time + data$pop_served + data$rev_tons_miles + data$ton_mile_lf + data$cap + data$tot_assets + data$investments + data$adj_assets
-cost.lm <- lm(cost_formula, data=data)
-summary(cost.lm)
-
-cost_formula <-  data_log$tot_op_cost ~ data_log$flight_length + data_log$plane_speed + data_log$daily_flight_time + data_log$pop_served + data_log$rev_tons_miles + data_log$ton_mile_lf + data_log$cap + data_log$tot_assets + data_log$investments + data_log$adj_assets
-cost.lm_log <- lm(cost_formula, data=data)
+#cost_formula <-  data_log$tot_op_cost ~ data_log$flight_length + data_log$plane_speed + data_log$daily_flight_time + data_log$pop_served + data_log$rev_tons_miles + data_log$ton_mile_lf + data_log$cap + data_log$tot_assets + data_log$investments + data_log$adj_assets
+cost_formula <-  data_log$tot_op_cost ~ .
+cost.lm_log <- lm(cost_formula, data=data_log)
 summary(cost.lm_log)
 
 ```
@@ -224,9 +151,11 @@ $R^2 = 0.973$ and $adjusted R^2 = 0.9595$ that are high results.
 
 According to the hypotheses ($H_0: \beta_0 = ... = \beta_9 = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is rejected. 
 
-##5. Model assessment 
 
-```{r}
+
+# Model assessment
+
+```{r, echo=FALSE}
 #layout(matrix(1:6,ncol=3))
 #plot(cost.lm, which = c(1,2,3,4,5,6) )   #bad results !!
 
@@ -254,39 +183,7 @@ Residuals vs. leverage allows to identify potential influencor outliers. We can 
 
 https://data.library.virginia.edu/diagnostic-plots/ (explication comment interpréter les graphs)
 
-# Introduction/background
-This is some text to test the template. 
-
-## Figure with caption
-```{r, echo=FALSE, fig.width=params$figwidth, fig.cap = "Caption goes here"}
-ggplot(cars, aes(speed, dist)) + geom_point()
-```
-
-## Equations with value replacement:
-```{r, echo=FALSE}
-# set variables
-
-set.seed(1)
-values <- sample(10:100, sample(3:5))/10
-lv <- length(values)
-avg <- sum(values)/lv
-```
-
-\begin{center}
-The average of values is 
-$\hat{v} = \frac{`r paste(values, collapse=" + ")`}{`r lv`} = `r round(avg, 3)`$.
-\end{center}
-
-## Table (directly from R)
-We can also use the default Latex tables, if we are in a latex code chunk (same as R code chunk, with =latex instead of r --> see the latex code chunk above)
-```{r, echo=FALSE}
-kable(mtcars[1:5,], caption="A wonderful table.")
-
-```
-
-
-# Exploratory data analysis
-# Model fitting
-# Model assessment
 # Final estimated model
+
+
 # Conclusions
