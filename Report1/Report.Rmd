@@ -36,6 +36,16 @@ library(readr)
 
 # Introduction/background
 
+```{r, echo=FALSE}
+abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
+space <- c("","","","","","","","","","","")
+fullnames <- c("Length of flight (miles)", "Speed of plane (miles/hr)", "Daily flight time (hrs)", "Population served (thousands)", "Total operating costs (cents per revenue ton-mile)", "Revenue tons per aircraft mile", "Ton-mile load factor (proportion)", "Available capacity (tons per mile)", "Total assets ($100,000s)", "Investments and special funds ($100,000s)", "Adjusted assets ($100,000s)")
+corresp_table <- matrix(data = c(abb,space,fullnames), nrow = 11, ncol = 3)
+
+kable(corresp_table, align='lcr')
+```
+
+
 
 
 
@@ -44,7 +54,7 @@ library(readr)
 
 ```{r, include=FALSE}
 data <- read.delim("airline_costs.dat", header=FALSE, sep="")
-colnames <- c("airline","flight_length", "plane_speed", "daily_flight_time", "pop_served", "tot_op_cost", "rev_tons_miles", "ton_mile_lf", "cap", "tot_assets", "investments", "adj_assets")
+colnames <- c("airline","FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
 colnames(data) <- colnames
 ncol(data)
 nrow(data)
@@ -95,7 +105,7 @@ for (i in 2:ncol(data_log)){
 summary_table <- rbind(summary_table, meantable)
 summary_table <- rbind(summary_table, sdtable)
 summary_table <- rbind(summary_table, madtable)
-names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available capacity", "Total assets", "Investments and special funds", "Adjusted assets")
+names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
 kable(summary_table[,1:5],align='cccccc') 
 kable(summary_table[,6:11],align='ccccccc')
@@ -132,12 +142,12 @@ It seems to have more correlation when taking the log of the data ; more straigh
 # Model fitting
 
 ```{r, include=FALSE}
-#cost_formula <-  data$tot_op_cost ~ data$flight_length + data$plane_speed + data$daily_flight_time + data$pop_served + data$rev_tons_miles + data$ton_mile_lf + data$cap + data$tot_assets + data$investments + data$adj_assets
+#cost_formula <-  data$TOC ~ data$FL + data$SoP + data$DFT + data$PS + data$RTM + data$LF + data$C + data$TA + data$I + data$AA
 #cost.lm <- lm(cost_formula, data=data)
 #summary(cost.lm)
 
-#cost_formula <-  data_log$tot_op_cost ~ data_log$flight_length + data_log$plane_speed + data_log$daily_flight_time + data_log$pop_served + data_log$rev_tons_miles + data_log$ton_mile_lf + data_log$cap + data_log$tot_assets + data_log$investments + data_log$adj_assets
-cost_formula <-  data_log$tot_op_cost ~ .
+#cost_formula <-  data_log$TOC ~ data_log$FL + data_log$SoP + data_log$DFT + data_log$PS + data_log$RTM + data_log$LF + data_log$C + data_log$TA + data_log$I + data_log$AA
+cost_formula <-  data_log$TOC ~ .
 cost.lm_log <- lm(cost_formula, data=data_log)
 s <- summary(cost.lm_log)
 rsq <- s$r.squared
