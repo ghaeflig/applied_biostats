@@ -139,17 +139,21 @@ It seems to have more correlation when taking the log of the data ; more straigh
 #cost_formula <-  data_log$tot_op_cost ~ data_log$flight_length + data_log$plane_speed + data_log$daily_flight_time + data_log$pop_served + data_log$rev_tons_miles + data_log$ton_mile_lf + data_log$cap + data_log$tot_assets + data_log$investments + data_log$adj_assets
 cost_formula <-  data_log$tot_op_cost ~ .
 cost.lm_log <- lm(cost_formula, data=data_log)
-summary(cost.lm_log)
-
+s <- summary(cost.lm_log)
+rsq <- s$r.squared
+arsq <- s$adj.r.squared
+coeff <- cost.lm_log$coefficients
 ```
 Response for log data:
 According to the summary, the equation is the following: 
 
-log(Total_op_cost) = 7.3089 + 0.3186 * log(flight_length) - 0.9256 * log(plane_speed) - 0.1610 * log(daily_flight_time) + 0.0325 * log(pop_served) - 14.9353 * log(rev_tons_miles) + 13.8425 * log(ton_mile_lf) +14.2694 * log(cap) - 0.3059 * log(tot_assets) - 0.0043 * log(investments) + 0.3528 * log(adj_assets)
+$TOC = \hat{\beta_0} + \hat{\beta_1} \times FL + \hat{\beta_2} \times SoP + \hat{\beta_3} \times DFT + \hat{\beta_4} \times PS + \hat{\beta_5} \times RTM + \hat{\beta_6} \times LF + \hat{\beta_7} \times C + \hat{\beta_8} \times TA + \hat{\beta_9} \times I + \hat{\beta_{10}} \times AA$
 
-$R^2 = 0.973$ and $adjusted R^2 = 0.9595$ that are high results. 
+$TOC = `r round(coeff[1],2)` + (`r round(coeff[2],2)` \times FL) + (`r round(coeff[3],2)` \times SoP) + (`r round(coeff[4],2)` \times DFT) + (`r round(coeff[5],2)` \times PS) + (`r round(coeff[6],2)` \times RTM) + (`r round(coeff[7],2)` \times LF) + (`r round(coeff[8],2)` \times C) + (`r round(coeff[9],2)` \times TA) + (`r round(coeff[10],2)` \times I) + (`r round(coeff[11],2)` \times AA$
 
-According to the hypotheses ($H_0: \beta_0 = ... = \beta_9 = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is rejected. 
+$R^2 = `r round(rsq,2)`$ and adjusted $R^2 = `r round(arsq,2)`$ that are high results. 
+
+According to the hypotheses ($H_0: \beta_0 = ... = \beta_{10} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is rejected. 
 
 
 
