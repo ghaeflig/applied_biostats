@@ -1,8 +1,9 @@
 ---
-title: "Report 1: We need a good name for this"
+title: "Report 1: Airline Costs analysis"
 output: 
   pdf_document:
     latex_engine: pdflatex
+    fig_caption: yes
 geometry: 
   - margin=2.5cm
 papersize: a4
@@ -35,6 +36,11 @@ library(readr)
 ```
 
 # Introduction/background
+<!-- (brief statement of scientific question:) -->
+The analysis is interested in airline costs depending on multiple factors. These latter are evaluated in order to evaluate their influences on the cost. 
+<!-- (all variables defined:) -->
+The data set consists of 11 variables for 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. To define it, 10 other variables are available: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
+Tow variables were determined by other variables: The capacity corresponds to the division of the revenue tons per aircraft mile with the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds. 
 
 ```{r, echo=FALSE}
 abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
@@ -42,7 +48,7 @@ space <- c("","","","","","","","","","","")
 fullnames <- c("Length of flight (miles)", "Speed of plane (miles/hr)", "Daily flight time (hrs)", "Population served (thousands)", "Total operating costs (cents per revenue ton-mile)", "Revenue tons per aircraft mile", "Ton-mile load factor (proportion)", "Available capacity (tons per mile)", "Total assets ($100,000s)", "Investments and special funds ($100,000s)", "Adjusted assets ($100,000s)")
 corresp_table <- matrix(data = c(abb,space,fullnames), nrow = 11, ncol = 3)
 
-kable(corresp_table, align='lcr')
+kable(corresp_table, align='lcr', caption = "Abreviations of the variables.")
 ```
 
 
@@ -74,10 +80,10 @@ column 1 = rownames
 
 ## Univariate graphical
 
-```{r, fig.width=10, fig.height =5, echo=FALSE}
+```{r, fig.width=10, fig.height =5, fig.cap = "Boxplots of the raw data and the logarithm of the data", echo=FALSE}
 par(mfrow=c(1,2), mar=(c(6,4.1,4.1,2.1))) 
 boxplot(data, las=2, main='Boxplots of the data')
-boxplot(log(data), las=2, main='Boxplots of the log of the data')
+boxplot(log(data), las=2, main='Boxplots of the log of the data.')
 
 ```
 Taking the log can be useful because many differences of amplitudes regarding of the columns ???
@@ -107,13 +113,13 @@ summary_table <- rbind(summary_table, sdtable)
 summary_table <- rbind(summary_table, madtable)
 names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
-kable(summary_table[,1:5],align='cccccc') 
+kable(summary_table[,1:5],align='cccccc', caption = "Mean, Standard deviation and median absolute deviation of the variables.") 
 kable(summary_table[,6:11],align='ccccccc')
 ```
 
 ## Bivariate numerical (correlations)
 
-```{r, fig.width=5, fig.height =5, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, fig.width=5, fig.height =5, fig.cap=paste("Correlation values between each features"), echo=FALSE, message=FALSE, warning=FALSE}
 #Numerical part
 
 #install.packages("Hmisc")
@@ -133,7 +139,7 @@ These plots image the correlation values between each feature. Indeed, log data 
 
 ## Bivariate graphical
 
-```{r, fig.width=7, fig.height =7, echo=FALSE}
+```{r, fig.width=7, fig.height =7, fig.cap="Scatter plots for every relations.", echo=FALSE}
 pairs(data_log)
 ```
 It seems to have more correlation when taking the log of the data ; more straight lines
@@ -153,6 +159,7 @@ s <- summary(cost.lm_log)
 rsq <- s$r.squared
 arsq <- s$adj.r.squared
 coeff <- cost.lm_log$coefficients
+
 ```
 Response for log data:
 According to the summary, the equation is the following: 
@@ -169,7 +176,7 @@ According to the hypotheses ($H_0: \beta_0 = ... = \beta_{10} = 0$ and $H_1:$ at
 
 # Model assessment
 
-```{r, echo=FALSE}
+```{r, fig.cap = "Residual analysis", echo=FALSE}
 #layout(matrix(1:6,ncol=3))
 #plot(cost.lm, which = c(1,2,3,4,5,6) )   #bad results !!
 
@@ -201,3 +208,46 @@ https://data.library.virginia.edu/diagnostic-plots/ (explication comment interpr
 
 
 # Conclusions
+
+
+
+
+```{r, include=FALSE}
+#est-ce que l'on retirerait pas le outliers central ? 
+data_log <- log(data)
+data_log[,7] <- data[,7]
+data_log <- data_log[-c(6),]
+
+cost_formula <-  data_log$TOC ~ .
+cost.lm_log <- lm(cost_formula, data=data_log)
+s <- summary(cost.lm_log)
+rsq <- s$r.squared
+arsq <- s$adj.r.squared
+coeff <- cost.lm_log$coefficients
+summary(cost.lm_log)
+
+layout(matrix(1:6,ncol=3))
+plot(cost.lm_log, which = c(1,2,3,4,5,6) )
+```
+
+```{r, include=FALSE}
+data_log <- log(data)
+data_log[,7] <- data[,7]
+data_log <- data_log[,-c(6,9,10)]
+#retirer les colonne 6(RTM), 9(TA) et 10(I) 
+#car Capacité est calculé de cette manière: RTM/LF
+#et AA = TA-I, ils sont donc directement relié. dans le paper ils retirent 
+#ces paramètres. On a plus de facteurs significatifs de cette manières. 
+
+
+cost_formula <-  data_log$TOC ~ .
+cost.lm_log <- lm(cost_formula, data=data_log)
+s <- summary(cost.lm_log)
+rsq <- s$r.squared
+arsq <- s$adj.r.squared
+coeff <- cost.lm_log$coefficients
+summary(cost.lm_log)
+
+layout(matrix(1:6,ncol=3))
+plot(cost.lm_log, which = c(1,2,3,4,5,6) )
+```
