@@ -1,19 +1,19 @@
 ---
-title: "Report 1: Airline Costs analysis"
-output: 
+title: 'Report 1: Airline Costs analysis'
+output:
   pdf_document:
     fig_caption: yes
     latex_engine: pdflatex
-geometry: 
-  - margin=2.5cm
+  html_document:
+    df_print: paged
+geometry: margin=2.5cm
 papersize: a4
 header-includes:
-  - \usepackage{fancyhdr}
-  - \usepackage{caption}
-  - \pagestyle{fancy}
-  - \fancyhead[L]{Report 1}
-  - \fancyhead[R]{Monney, Haefliger, Franca, Ferrisse}
-  
+- \usepackage{fancyhdr}
+- \usepackage{caption}
+- \pagestyle{fancy}
+- \fancyhead[L]{Report 1}
+- \fancyhead[R]{Monney, Haefliger, Franca, Ferrisse}
 fontsize: 12pt
 params:
   figwidth: 5
@@ -40,10 +40,10 @@ library(readr)
 # Introduction/background
 
 <!-- (brief statement of scientific question:) -->
-The analysis is interested in airline costs depending on multiple factors. These latter are evaluated in order to evaluate their influences on the cost. 
+This project aims to explore the relationships between airline costs and multiple factors enumerated down below. This will be done through regression analysis.
 <!-- (all variables defined:) -->
-The data set consists of 11 variables for 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. To define it, 10 other variables are available: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
-Tow variables were determined by other variables: The capacity corresponds to the division of the revenue tons per aircraft mile with the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds. 
+The data set consists of 11 variables taken in 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
+Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds. 
 
 ```{r, echo=FALSE}
 abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
@@ -86,11 +86,11 @@ summary(data)
 
 ```{r, fig.width=10, fig.height =4.5, echo=FALSE, fig.cap = "Boxplots of the raw data and the logarithm of the data."}
 par(mfrow=c(1,2), mar=(c(4,4.1,4.1,2.1))) 
-boxplot(data, las=2, main='Boxplots of the data')
+boxplot(data, las=2, main='Boxplots of the raw data')
 boxplot(log(data), las=2, main='Boxplots of the log of the data')
 ```
 
-We can see in the left the boxplot that the factors of the raw data are unequally distributed ; they don't have the same magnitude of values. This is a problem to predict a model because some factors due to the fact that they have bigger values can have a non-realistic weight and therefore, it can lead to a meaningless regression. In order to get the data in the same order of magnitude, we decided to take the log of it except for the factor LF. Indeed, this factor has already a low magnitude (mean=0.48) without taking the log of it.
+We can see in the left the boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and therefore, it leads to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable, except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables.
 
 
 ```{r, include=FALSE}
@@ -119,7 +119,7 @@ summary_table <- rbind(summary_table, madtable)
 names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
 #names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
-kable(summary_table[,1:11],align='cccccc', caption = "Mean, Standard deviation and median absolute deviation of the variables.") 
+kable(summary_table[,1:11],align='cccccc', caption = "Mean, standard deviation and median absolute deviation of the variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
@@ -127,7 +127,7 @@ kable(summary_table[,1:11],align='cccccc', caption = "Mean, Standard deviation a
 ## Bivariate numerical (correlations)
 
 
-```{r, fig.width=3.5, fig.height =3.5, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Correlation values between each features."}
+```{r bivnum, fig.width=3.5, fig.height =3.5, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Correlation values between each feature."}
 #Numerical part
 
 #install.packages("Hmisc")
@@ -147,18 +147,16 @@ corrplot(data_cor_log)
 
 
 
-## Bivariate graphical
+<!-- ## Bivariate graphical (j'ai enlevé cette partie, je pense qu'elle apporte pas grand chose-->
 
 
-```{r, fig.width=6, fig.height =6, echo=FALSE, fig.cap="Scatter plots for every relations."}
+```{r, fig.width=6, fig.height =6, include=FALSE, fig.cap="Bivariate scatter plots for every relations."}
 pairs(data_log)
 #It seems to have more correlation when taking the log of the data ; more straight lines
 ```
 
 
-
-
-# Model fitting
+# Model fitting 
 
 
 ```{r, include=FALSE}
@@ -173,21 +171,24 @@ s <- summary(cost.lm_log)
 rsq <- s$r.squared
 arsq <- s$adj.r.squared
 coeff <- cost.lm_log$coefficients
-
+summary(cost.lm_log)
 ```
 
-Response for log data:
-According to the summary, the equation is the following: 
+According to the summary, the equation of our regression model is the following: 
 
 $TOC = \hat{\beta_0} + \hat{\beta_1} \times FL + \hat{\beta_2} \times SoP + \hat{\beta_3} \times DFT + \hat{\beta_4} \times PS + \hat{\beta_5} \times RTM + \hat{\beta_6} \times LF + \hat{\beta_7} \times C + \hat{\beta_8} \times TA + \hat{\beta_9} \times I + \hat{\beta_{10}} \times AA$
 
-$TOC = `r round(coeff[1],2)` + (`r round(coeff[2],2)` \times FL) + (`r round(coeff[3],2)` \times SoP) + (`r round(coeff[4],2)` \times DFT) + (`r round(coeff[5],2)` \times PS) + (`r round(coeff[6],2)` \times RTM) + (`r round(coeff[7],2)` \times LF) + (`r round(coeff[8],2)` \times C) + (`r round(coeff[9],2)` \times TA) + (`r round(coeff[10],2)` \times I) + (`r round(coeff[11],2)` \times AA$
+$TOC = `r round(coeff[1],2)` + (`r round(coeff[2],2)` \times FL) + (`r round(coeff[3],2)` \times SoP) + (`r round(coeff[4],2)` \times DFT) + (`r round(coeff[5],2)` \times PS) + (`r round(coeff[6],2)` \times RTM) + (`r round(coeff[7],2)` \times LF) + (`r round(coeff[8],2)` \times C) + (`r round(coeff[9],2)` \times TA) + (`r round(coeff[10],2)` \times I) + (`r round(coeff[11],2)` \times AA)$
 
-$R^2 = `r round(rsq,2)`$ and adjusted $R^2 = `r round(arsq,2)`$ that are high results. 
+$R^2 = `r round(rsq,2)`$ and adjusted $R^2 = `r round(arsq,2)`$   
 
-According to the hypotheses ($H_0: \beta_0 = ... = \beta_{10} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is rejected. 
+<br />  
 
-
+From the initial hypotheses ($H_0: \beta_0 = ... = \beta_{10} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
+<br /> 
+The values of the $R^2$ and adjusted $R^2$ are close to 1, which means that the variables are able to closely predict the dependent variable TOC.
+<br /> 
+In the summary of the linear regression, we can see that the variable RTM has the lowest p-value (=0.040 < 0.05). RTM seems to be the variable that can predict the TOC the best. If we look at figure 2, we can confirm that RTM is one of the most important variable to predict TOC because it has the most prominent colored point indicating a strong correlation between the two variables. 
 
 # Model assessment
 
