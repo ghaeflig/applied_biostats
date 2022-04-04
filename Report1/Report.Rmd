@@ -43,7 +43,7 @@ library(readr)
 This project aims to explore the relationships between airline costs and multiple factors enumerated down below. This will be done through regression analysis.
 <!-- (all variables defined:) -->
 The data set consists of 11 variables taken in 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
-Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds. 
+Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds.  
 
 ```{r, echo=FALSE}
 abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
@@ -90,13 +90,17 @@ boxplot(data, las=2, main='Boxplots of the raw data')
 boxplot(log(data), las=2, main='Boxplots of the log of the data')
 ```
 
-We can see in the left the boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and therefore, it leads to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable, except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables.
+
+We can see in the left the boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and therefore, it leads to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
+Moreover, due dependencies explained in the introduction, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost.   
 
 
 ```{r, include=FALSE}
 #Take the log of the data
 data_log <- log(data)
-data_log[,7] <- data[,7]
+#data_log[,7] <- data[,7] #REMOVED !
+
+data_log <- data_log[,-c(6,7,9,10)]
 ```
 
 
@@ -116,10 +120,10 @@ for (i in 2:ncol(data_log)){
 summary_table <- rbind(summary_table, meantable)
 summary_table <- rbind(summary_table, sdtable)
 summary_table <- rbind(summary_table, madtable)
-names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
+names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
 #names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
-kable(summary_table[,1:11],align='cccccc', caption = "Mean, standard deviation and median absolute deviation of the variables.") 
+kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation and median absolute deviation of the variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
@@ -143,9 +147,14 @@ data_cor_log <- cor(data_log)
 #rcor <- rcorr(as.matrix(log(data))
 corrplot(data_cor_log)
 #These plots image the correlation values between each feature. Indeed, log data show higher correlation values. (For numerical part of criteria)
+
 ```
 
+\newpage
 
+This diagram demonstrates the correlation between each feature. The color blue illustrates a positive correlation, whereas the color red shows a negative correlation. Negative correlations are visible between the total operating costs and the six other variables. The TOC seems to decrease when the other factors increase. The correlation between the total operating cost and the population served is lower. 
+
+<br />  
 
 <!-- ## Bivariate graphical (j'ai enlevé cette partie, je pense qu'elle apporte pas grand chose-->
 
@@ -156,7 +165,7 @@ pairs(data_log)
 ```
 
 
-# Model fitting 
+
 
 
 ```{r, include=FALSE}
@@ -171,24 +180,42 @@ s <- summary(cost.lm_log)
 rsq <- s$r.squared
 arsq <- s$adj.r.squared
 coeff <- cost.lm_log$coefficients
+p_val <-pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)
 summary(cost.lm_log)
 ```
 
+# Model fitting 
+
 According to the summary, the equation of our regression model is the following: 
 
-$TOC = \hat{\beta_0} + \hat{\beta_1} \times FL + \hat{\beta_2} \times SoP + \hat{\beta_3} \times DFT + \hat{\beta_4} \times PS + \hat{\beta_5} \times RTM + \hat{\beta_6} \times LF + \hat{\beta_7} \times C + \hat{\beta_8} \times TA + \hat{\beta_9} \times I + \hat{\beta_{10}} \times AA$
+$TOC = \hat{\beta_0} + \hat{\beta_1} \times FL + \hat{\beta_2} \times SoP + \hat{\beta_3} \times DFT + \hat{\beta_4} \times PS + \hat{\beta_5} \times C + \hat{\beta_{6}} \times AA$
 
-$TOC = `r round(coeff[1],2)` + (`r round(coeff[2],2)` \times FL) + (`r round(coeff[3],2)` \times SoP) + (`r round(coeff[4],2)` \times DFT) + (`r round(coeff[5],2)` \times PS) + (`r round(coeff[6],2)` \times RTM) + (`r round(coeff[7],2)` \times LF) + (`r round(coeff[8],2)` \times C) + (`r round(coeff[9],2)` \times TA) + (`r round(coeff[10],2)` \times I) + (`r round(coeff[11],2)` \times AA)$
+$TOC = `r round(coeff[1],2)` + (`r round(coeff[2],2)` \times FL) + (`r round(coeff[3],2)` \times SoP) + (`r round(coeff[4],2)` \times DFT) + (`r round(coeff[5],2)` \times PS) + (`r round(coeff[6],2)` \times C) + (`r round(coeff[7],2)` \times AA)$
 
 $R^2 = `r round(rsq,2)`$ and adjusted $R^2 = `r round(arsq,2)`$   
 
 <br />  
 
-From the initial hypotheses ($H_0: \beta_0 = ... = \beta_{10} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $1.862*10^{-13} < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
+From the initial hypotheses ($H_0: \beta_0 = ... = \beta_{6} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $`r p_val` < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
 <br /> 
 The values of the $R^2$ and adjusted $R^2$ are close to 1, which means that the variables are able to closely predict the dependent variable TOC.
 <br /> 
-In the summary of the linear regression, we can see that the variable RTM has the lowest p-value (=0.040 < 0.05). RTM seems to be the variable that can predict the TOC the best. If we look at figure 2, we can confirm that RTM is one of the most important variable to predict TOC because it has the most prominent colored point indicating a strong correlation between the two variables. 
+
+The p-values of the different features are the following: 
+```{r, echo=FALSE}
+
+features <- c("Intercept", "FL", "SoP", "DFT", "PS", "C", "AA")
+coeffs <- c(s$coefficients[,4])
+corresp_table <- matrix(c(features, round(coeffs,2)),ncol=7,byrow=TRUE)
+
+kable(corresp_table, caption = "P-values")
+
+```
+
+Two features show significant results. These are the daily fight time (DFT) and the available capacity (C), which have a p-value equal to $`r round(s$coefficients[4,4],4)`$ and $`r round(s$coefficients[6,4],3)`$, respectively. Additionaly, both variables have an high correlation with the total operating cost, as shown in the figure 2. 
+
+<!-- Plus le cas:  In the summary of the linear regression, we can see that the variable RTM has the lowest p-value (=0.040 < 0.05). RTM seems to be the variable that can predict the TOC the best. If we look at figure 2, we can confirm that RTM is one of the most important variable to predict TOC because it has the most prominent colored point indicating a strong correlation between the two variables. -->
+
 
 # Model assessment
 
@@ -199,14 +226,38 @@ In the summary of the linear regression, we can see that the variable RTM has th
 #log data
 layout(matrix(1:6,ncol=3))
 plot(cost.lm_log, which = c(1,2,3,4,5,6), cex.caption=0.7, cex.id=0.7)
+
+#hist(cost.lm_log$resid, main="Histogram of Residuals", ylab="Residuals") #histogramme des résidues
+
+#library(lmtest) #Test pour la correlation... 
+#dwtest(cost.lm_log)
+
 ```
 
+<!-- From criteria file: 
 Assumptions (from report criteria):
-1. errors have mean 0
-2. errors are homoscedastic (same variance)
-3. errors are uncorrelated
-4. errors are normally distributed
+1. errors have mean 0 (residuals vs fitted plot) OK
+2. errors are homoscedastic (same variance) (scale location plot) OK
+3. errors are uncorrelated (residuals vs fitted plot)
+4. errors are normally distributed (QQ plot) OK-->
 
+
+<!--(explication comment interpréter les graphs)
+https://data.library.virginia.edu/diagnostic-plots/ 
+https://www.andrew.cmu.edu/user/achoulde/94842/lectures/lecture09/lecture09-94842.html -->
+
+From these different plot, the residuals can be evaluated. Many assumptions must be controlled.
+Firstly, the Normal QQ plot illustrates the normal distribution. In this case, despite the central airlines data, the standardized residuals are mostly aligned on the theoretical straight line. This confirms that the errors follow a normal distribution. 
+
+The second assumption is that the errors have a mean equal zero. This can be observed on the residuals vs. fitted plot. Indeed, the residual values are located around 0 with small variation, less than 0.4. This observation means that no non-linear relation are present in the fitted model. 
+From the same plot, the uncorrelated residues can be assumed because the values appears randomly plotted and no trend is observable.
+
+Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues. In this model, the points are effectively randomly spread and form a horizontal line. 
+
+Finally, residuals vs. leverage and cook's distance plots allow to identify potential influencor outliers. No airline errors are higher than 1. Central data seems to have a small deviation taht can influence the regression, but it stays reasonable. 
+
+
+<!-- old description:
 FOR LOG DATA: 
 Normal QQ plot shows that absolute values of standardized residuals reach approximately 3 at most, and that no particular deviation from theoretical normal distribution (data follow the theoretical straight line). 
 
@@ -215,14 +266,14 @@ From Residuals vs. fitted plot, we can observe that residuals are spread around 
 Scale-location allows to observe homoscedasticity. Until fitted value 5, the points are randomly spread and the line is horizontal which affirms the homoscedasticity. After 5, there is some variances, however in a general view the line is quite horizontal. 
 
 Residuals vs. leverage allows to identify potential influencor outliers. We can observe that NorthEast and lake central are out of the cook distance (cook's distance higher than 1 (cook's distance plot)) and have influence on the regression.
-
-
-https://data.library.virginia.edu/diagnostic-plots/ (explication comment interpréter les graphs)
+-->
 
 # Final estimated model
 
 
 # Conclusions
+
+
 
 
 
@@ -248,7 +299,7 @@ plot(cost.lm_log, which = c(1,2,3,4,5,6) )
 ```{r, include=FALSE}
 data_log <- log(data)
 data_log[,7] <- data[,7]
-data_log <- data_log[,-c(6,9,10)]
+data_log <- data_log[,-c(6,7,9,10)]
 #retirer les colonne 6(RTM), 9(TA) et 10(I) 
 #car Capacité est calculé de cette manière: RTM/LF
 #et AA = TA-I, ils sont donc directement relié. dans le paper ils retirent 
