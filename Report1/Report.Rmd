@@ -42,7 +42,7 @@ library(readr)
 <!-- (brief statement of scientific question:) -->
 This project aims to explore the relationships between airline costs and multiple factors enumerated down below. This will be done through regression analysis.
 <!-- (all variables defined:) -->
-The data set consists of 11 variables taken in 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
+The data set consists of 11 variables extracted from 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
 Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds.  
 
 ```{r, echo=FALSE}
@@ -51,7 +51,7 @@ space <- c("","","","","","","","","","","")
 fullnames <- c("Length of flight (miles)", "Speed of plane (miles/hr)", "Daily flight time (hrs)", "Population served (thousands)", "Total operating costs (cents per revenue ton-mile)", "Revenue tons per aircraft mile", "Ton-mile load factor (proportion)", "Available capacity (tons per mile)", "Total assets ($100,000s)", "Investments and special funds ($100,000s)", "Adjusted assets ($100,000s)")
 corresp_table <- matrix(data = c(abb,space,fullnames), nrow = 11, ncol = 3)
 
-kable(corresp_table, align='lcr', caption = "Abreviations of the variables.")
+kable(corresp_table, align='lcr', caption = "Abbreviations of the variables.")
 ```
 
 
@@ -91,7 +91,7 @@ boxplot(log(data), las=2, main='Boxplots of the log of the data')
 ```
 
 
-We can see in the left the boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and therefore, it leads to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
+We can see in the left boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and thereby lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
 Moreover, due dependencies explained in the introduction, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost.   
 
 
@@ -123,7 +123,7 @@ summary_table <- rbind(summary_table, madtable)
 names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
 #names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
-kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation and median absolute deviation of the variables.") 
+kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation (SD) and median absolute deviation (MAD) of the variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
@@ -265,7 +265,7 @@ From Residuals vs. fitted plot, we can observe that residuals are spread around 
 
 Scale-location allows to observe homoscedasticity. Until fitted value 5, the points are randomly spread and the line is horizontal which affirms the homoscedasticity. After 5, there is some variances, however in a general view the line is quite horizontal. 
 
-Residuals vs. leverage allows to identify potential influencor outliers. We can observe that NorthEast and lake central are out of the cook distance (cook's distance higher than 1 (cook's distance plot)) and have influence on the regression.
+Residuals vs. leverage allows to identify potential influencor outliers. We can observe that NorthEast and Lake Central are out of the cook distance (cook's distance higher than 1 (cook's distance plot)) and have influence on the regression.
 -->
 
 # Final estimated model
