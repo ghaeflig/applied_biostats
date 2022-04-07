@@ -43,7 +43,7 @@ library(readr)
 This project aims to explore the relationships between airline costs and multiple factors enumerated down below. This will be done through regression analysis.
 <!-- (all variables defined:) -->
 The data set consists of 11 variables extracted from 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
-Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds. Therefore, due these dependencies, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. 
+Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile (RTM) divided by the ton-mile load factor (LF), and the adjusted assets are equal to the difference between the total assets (TA) and the investments and special funds (I). Therefore, due these dependencies, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. 
 
 ```{r, echo=FALSE}
 abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
@@ -95,10 +95,10 @@ boxplot(data_log, las=2, main='Boxplots of the log of the data')
 ```
 
 
-We can see in the left boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and thereby lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. From there, keep in mind that each time we cite a factor name it is the log of it. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
+We can see in the left boxplot that the raw data is unequally distributed; it has very different factors magnitude values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and thereby lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. From there, keep in mind that each time we cite a factor name it is the log of it. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
 <!--Moreover, due dependencies explained in the introduction, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. -->
 
-
+<br /> 
 
 ```{r, echo=FALSE}
 
@@ -158,11 +158,12 @@ kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation (S
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
+\newpage 
 
 ## Bivariate numerical (correlations)
 
 
-```{r bivnum, fig.width=3.5, fig.height =3.5, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Correlation values between each feature."}
+```{r bivnum, fig.width=4, fig.height =4, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Correlation values between each feature."}
 #Numerical part
 
 #install.packages("Hmisc")
@@ -181,7 +182,7 @@ corrplot(data_cor_log)
 
 ```
 
-\newpage
+
 
 This diagram demonstrates the correlation between each feature. The color blue illustrates a positive correlation, whereas the color red shows a negative correlation. Negative correlations are visible between the total operating costs and the six other variables. The TOC seems to decrease when the other factors increase. The correlation between the total operating cost and the population served is lower. 
 
@@ -189,13 +190,14 @@ This diagram demonstrates the correlation between each feature. The color blue i
 
 ## Bivariate graphical 
 
+This graphics demonstrates some linear relationships between two features like between FL and SoP or FL and AA because we observe almost in a straight line between these two factors. We can observe than between TOC and other factors no good straight line appear; it means that we will probably need more than one factor to best predict TOC linearly.
 
-```{r, fig.width=6, fig.height =6, echo=FALSE, fig.cap="Bivariate scatter plots for every relations."}
+\newpage
+
+```{r, fig.width=5, fig.height =5, echo=FALSE, fig.cap="Bivariate scatter plots for every relations."}
 pairs(data_log)
 #It seems to have more correlation when taking the log of the data ; more straight lines
 ```
-
-
 
 
 
@@ -247,6 +249,8 @@ From the initial hypotheses ($H_0: \beta_0 = ... = \beta_{6} = 0$ and $H_1:$ at 
 The values of the $R^2$ and adjusted $R^2$ are close to 1, which means that the variables are able to closely predict the dependent variable TOC.
 <br /> 
 
+\newpage
+
 The p-values of the different features are the following: 
 ```{r, echo=FALSE}
 
@@ -261,16 +265,29 @@ kable(corresp_table, caption = "P-values")
 Two features show significant results. These are the daily fight time (DFT) and the available capacity (C), which have a p-value equal to $`r round(s$coefficients[4,4],4)`$ and $`r round(s$coefficients[6,4],3)`$, respectively. Additionaly, both variables have an high correlation with the total operating cost, as shown in the figure 2. 
 
 
-We will now perform a step-wise model selection by AIC on the previous linear model to select the best model. The model found through this method depends on the two variables daily flight time (DFT) and available capacity (C), which corresponds to what has been found previously with the linear regression. This can be explained since these were the only two variables that were significant. Here is the model:
+We will now perform a step-wise model selection by AIC on the previous linear model. The best model found through this method depends on the two variables daily flight time (DFT) and available capacity (C), which corresponds to what has been found previously with the linear regression. This can be explained since these were the only two variables that were significant. Here is the model:
 
 
 $TOC = \hat{\beta_0} + \hat{\beta_1} \times DFT + \hat{\beta_2} \times C$
 
 $TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C)$
 
+The R-squared values are $R^2 = `r round(final_rsq,2)`$ and adjusted $R^2 = `r round(final_arsq,2)`$
 
 From the initial hypotheses ($H_0: \beta_0 = \beta_{1} = \beta_{2} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $`r final_p_val` < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
-The R-squared values are $R^2 = `r round(final_rsq,2)`$ and adjusted $R^2 = `r round(final_arsq,2)`$
+
+The p-values of the different features for our final model are smaller ; they are even close to 0. It confirms the fact that the final model give better results than the previous one ; it has smaller p-values, a greater adjusted R-squared, a lower AIC.
+
+```{r, echo=FALSE}
+#features <- c("Intercept", "DFT", "C")
+#coeffs <- c(final_s$coefficients[,4])
+#corresp_table <- matrix(c(features, round(coeffs,2)),ncol=3,byrow=TRUE)
+#kable(corresp_table, caption = "P-values")
+# p intercept = < 2e-16
+# p C = 4.88e-07
+# p DFT = 0.000558
+```
+
 
 <!-- Plus le cas:  In the summary of the linear regression, we can see that the variable RTM has the lowest p-value (=0.040 < 0.05). RTM seems to be the variable that can predict the TOC the best. If we look at figure 2, we can confirm that RTM is one of the most important variable to predict TOC because it has the most prominent colored point indicating a strong correlation between the two variables. -->
 
@@ -312,9 +329,9 @@ Firstly, the Normal QQ plot illustrates the normal distribution. In this case, d
 The second assumption is that the errors have a mean equal zero. This can be observed on the residuals vs. fitted plot. Indeed, the residual values are located around 0 with small variation, less than 0.4. This observation means that no non-linear relation are present in the fitted model. 
 From the same plot, the uncorrelated residues can be assumed because the values appears randomly plotted and no trend is observable.
 
-Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues. In this model, the points are effectively randomly spread and form a horizontal line. 
+Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues. In this model, the points are effectively randomly spread and form an almost horizontal line. 
 
-Finally, residuals vs. leverage and cook's distance plots allow to identify potential influencor outliers. No airline errors are higher than 1. Central data seems to have a small deviation taht can influence the regression, but it stays reasonable. 
+Finally, residuals vs. leverage and cook's distance plots allow to identify potential outliers. No airline errors are higher than 1. Central data seems to have a small deviation that can influence the regression, but it stays reasonable. 
 
 
 
@@ -330,52 +347,13 @@ Scale-location allows to observe homoscedasticity. Until fitted value 5, the poi
 Residuals vs. leverage allows to identify potential influencor outliers. We can observe that NorthEast and Lake Central are out of the cook distance (cook's distance higher than 1 (cook's distance plot)) and have influence on the regression.
 -->
 
-# Final estimated model
+<!--# Final estimated model -->
 
 
 # Conclusions
+In conclusion, to get the best linear model, we first remove the factors that were dependent. Then, we took the log of the data and we found the best model by AIC selection. At the end, we verified that the usual statistic assumptions. So, our final model to predict TOC is  $TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C)$ with a p-value equal to $`r final_p_val` < \alpha = 0.05$ and an adjusted $R^2 = `r round(final_arsq,2)`$.
 
 
 
 
 
-
-```{r, include=FALSE}
-#est-ce que l'on retirerait pas le outliers central ? 
-data_log <- log(data)
-data_log[,7] <- data[,7]
-data_log <- data_log[-c(6),]
-
-cost_formula <-  data_log$TOC ~ .
-cost.lm_log <- lm(cost_formula, data=data_log)
-s <- summary(cost.lm_log)
-rsq <- s$r.squared
-arsq <- s$adj.r.squared
-coeff <- cost.lm_log$coefficients
-summary(cost.lm_log)
-
-layout(matrix(1:6,ncol=3))
-plot(cost.lm_log, which = c(1,2,3,4,5,6) )
-```
-
-```{r, include=FALSE}
-data_log <- log(data)
-data_log[,7] <- data[,7]
-data_log <- data_log[,-c(6,7,9,10)]
-#retirer les colonne 6(RTM), 9(TA) et 10(I) 
-#car Capacité est calculé de cette manière: RTM/LF
-#et AA = TA-I, ils sont donc directement relié. dans le paper ils retirent 
-#ces paramètres. On a plus de facteurs significatifs de cette manières. 
-
-
-cost_formula <-  data_log$TOC ~ .
-cost.lm_log <- lm(cost_formula, data=data_log)
-s <- summary(cost.lm_log)
-rsq <- s$r.squared
-arsq <- s$adj.r.squared
-coeff <- cost.lm_log$coefficients
-summary(cost.lm_log)
-
-layout(matrix(1:6,ncol=3))
-plot(cost.lm_log, which = c(1,2,3,4,5,6) )
-```
