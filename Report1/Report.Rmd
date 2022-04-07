@@ -306,8 +306,10 @@ layout(matrix(1:6,ncol=3))
 plot(final_lm, which = c(1,2,3,4,5,6), cex.caption=0.7, cex.id=0.7)
 #hist(cost.lm_log$resid, main="Histogram of Residuals", ylab="Residuals") #histogramme des résidues
 
-#library(lmtest) #Test pour la correlation... 
-#dwtest(cost.lm_log)
+library(lmtest) 
+#dwtest(cost.lm_log) #Test pour la correlation... 
+bptest(final_lm) #test homoscedacity
+
 
 ```
 
@@ -323,15 +325,15 @@ Assumptions (from report criteria):
 https://data.library.virginia.edu/diagnostic-plots/ 
 https://www.andrew.cmu.edu/user/achoulde/94842/lectures/lecture09/lecture09-94842.html -->
 
-From these different plot, the residuals can be evaluated. Many assumptions must be controlled.
-Firstly, the Normal QQ plot illustrates the normal distribution. In this case, despite the central airlines data, the standardized residuals are mostly aligned on the theoretical straight line. This confirms that the errors follow a normal distribution. 
+From these different plots, the residuals can be evaluated. Many assumptions must be controlled.
+Firstly, the normal QQ plot illustrates the normal distribution. In this case, despite the central airlines' data, the standardized residuals are mostly aligned on the theoretical straight line. This confirms that the errors follow a normal distribution. 
 
-The second assumption is that the errors have a mean equal zero. This can be observed on the residuals vs. fitted plot. Indeed, the residual values are located around 0 with small variation, less than 0.4. This observation means that no non-linear relation are present in the fitted model. 
-From the same plot, the uncorrelated residues can be assumed because the values appears randomly plotted and no trend is observable.
+The second assumption is that the errors have a mean equal to zero. This can be observed on the residuals vs. fitted plot. Indeed, the residual values are located around 0 with a small variation. This observation means that no non-linear relationship are present in the fitted model. 
+From the same plot, the uncorrelated residues can be assumed because the values appear randomly plotted, the red line is horizontal, and no trend is observable.
 
-Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues. In this model, the points are effectively randomly spread and form an almost horizontal line. 
+Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues and determines if non-linearity is present. In this model, despite the last point which causes a descending slope, the points are generally randomly spread and form an almost horizontal line. To confirm the homoscedascity, the Breusch-pagan test can be used. This confirms it by indicating a non-significant p-value: the null hypothesis suggesting homoscedacity cannot be rejected.   
 
-Finally, residuals vs. leverage and cook's distance plots allow to identify potential outliers. No airline errors are higher than 1. Central data seems to have a small deviation that can influence the regression, but it stays reasonable. 
+Finally, residuals vs. leverage and Cook's distance plots allow to identify potential outliers. No airline errors have a cook's distance higher than 0.4. That means no outliers are observable in this model. 
 
 
 
