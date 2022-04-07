@@ -43,7 +43,7 @@ library(readr)
 This project aims to explore the relationships between airline costs and multiple factors enumerated down below. This will be done through regression analysis.
 <!-- (all variables defined:) -->
 The data set consists of 11 variables extracted from 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
-Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds.  
+Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile divided by the ton-mile load factor, and the adjusted assets are equal to the difference between the total assets and the investments and special funds. Therefore, due these dependencies, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. 
 
 ```{r, echo=FALSE}
 abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
@@ -86,19 +86,68 @@ summary(data)
 
 ```{r, fig.width=10, fig.height =4.5, echo=FALSE, fig.cap = "Boxplots of the raw data and the logarithm of the data."}
 par(mfrow=c(1,2), mar=(c(4,4.1,4.1,2.1))) 
+data_log <- log(data)
+#data_log[,7] <- data[,7] #REMOVED !
+data_log <- data_log[,-c(6,7,9,10)]
+data <- data[,-c(6,7,9,10)]
 boxplot(data, las=2, main='Boxplots of the raw data')
-boxplot(log(data), las=2, main='Boxplots of the log of the data')
+boxplot(data_log, las=2, main='Boxplots of the log of the data')
 ```
 
 
-We can see in the left boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and thereby lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
-Moreover, due dependencies explained in the introduction, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost.   
+We can see in the left boxplot that the raw data is unequally distributed; it does not have the same magnitude of values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and thereby lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. From there, keep in mind that each time we cite a factor name it is the log of it. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
+<!--Moreover, due dependencies explained in the introduction, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. -->
+
+
+
+````{r, echo=FALSE}
+data_log <- log(data)
+#data_log[,7] <- data[,7] #REMOVED !
+
+data_log <- data_log[,-c(6,7,9,10)]
+
+
+summary_table <- data.frame()
+fivesum <- fivenum(data_log[,1])
+mintable <- round(fivesum[1],2)
+firstqtable <- round(fivesum[2],2)
+mediantable <- round(fivesum[3],2)
+thirdqtable <- round(fivesum[4],2)
+maxtable <- round(fivesum[5],2)
+
+for (i in 2:ncol(data_log)){
+  fivesum <- fivenum(data_log[,i])
+  mintable <- c(mintable,round(fivesum[1],2))
+  firstqtable <- c(firstqtable,round(fivesum[2],2))
+  mediantable <- c(mediantable,round(fivesum[3],2))
+  thirdqtable <- c(thirdqtable,round(fivesum[4],2))
+  maxtable <- c(maxtable,round(fivesum[5],2))
+}
+
+summary_table <- rbind(summary_table, mintable)
+summary_table <- rbind(summary_table, firstqtable)
+summary_table <- rbind(summary_table, mediantable)
+summary_table <- rbind(summary_table, thirdqtable)
+summary_table <- rbind(summary_table, maxtable)
+names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
+#names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
+rownames(summary_table) <- c("Min","1st Q","Median","3rd Q","Max")
+kable(summary_table[,1:7],align='cccccc', caption = "5-numbers summary of the data: Min, 1st quartile, Median, 3rd Quartile and Max of the log variables.") 
+#kable(summary_table[,6:11],align='ccccccc')
+`````
+
+
 
 
 ```{r, include=FALSE}
 #Take the log of the data
+library(MASS)
 data_log <- log(data)
 #data_log[,7] <- data[,7] #REMOVED !
+#formula_all <-  data_log$TOC ~ .
+#lm_all <- lm(cost_formula, data=data_log)
+#summary(lm_all)
+#stepAIC(lm_all)
 
 data_log <- data_log[,-c(6,7,9,10)]
 ```
@@ -156,10 +205,10 @@ This diagram demonstrates the correlation between each feature. The color blue i
 
 <br />  
 
-<!-- ## Bivariate graphical (j'ai enlevé cette partie, je pense qu'elle apporte pas grand chose-->
+## Bivariate graphical 
 
 
-```{r, fig.width=6, fig.height =6, include=FALSE, fig.cap="Bivariate scatter plots for every relations."}
+```{r, fig.width=6, fig.height =6, echo=FALSE, fig.cap="Bivariate scatter plots for every relations."}
 pairs(data_log)
 #It seems to have more correlation when taking the log of the data ; more straight lines
 ```
@@ -174,6 +223,7 @@ pairs(data_log)
 #summary(cost.lm)
 
 #cost_formula <-  data_log$TOC ~ data_log$FL + data_log$SoP + data_log$DFT + data_log$PS + data_log$RTM + data_log$LF + data_log$C + data_log$TA + data_log$I + data_log$AA
+library(MASS)
 cost_formula <-  data_log$TOC ~ .
 cost.lm_log <- lm(cost_formula, data=data_log)
 s <- summary(cost.lm_log)
@@ -182,6 +232,12 @@ arsq <- s$adj.r.squared
 coeff <- cost.lm_log$coefficients
 p_val <-pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)
 summary(cost.lm_log)
+
+stepAIC(cost.lm_log)
+
+final_formula <- data_log$TOC ~ data_log$C + data_log$DFT
+final_lm <- lm(final_formula, data=data_log)
+summary(final_lm)
 ```
 
 # Model fitting 
@@ -224,9 +280,11 @@ Two features show significant results. These are the daily fight time (DFT) and 
 #plot(cost.lm, which = c(1,2,3,4,5,6) )   #bad results !!
 
 #log data
-layout(matrix(1:6,ncol=3))
-plot(cost.lm_log, which = c(1,2,3,4,5,6), cex.caption=0.7, cex.id=0.7)
+#layout(matrix(1:6,ncol=3))
+#plot(cost.lm_log, which = c(1,2,3,4,5,6), cex.caption=0.7, cex.id=0.7)
 
+layout(matrix(1:6,ncol=3))
+plot(final_lm, which = c(1,2,3,4,5,6), cex.caption=0.7, cex.id=0.7)
 #hist(cost.lm_log$resid, main="Histogram of Residuals", ylab="Residuals") #histogramme des résidues
 
 #library(lmtest) #Test pour la correlation... 
