@@ -260,15 +260,17 @@ kable(corresp_table, caption = "P-values")
 
 Two features show significant results. These are the daily fight time (DFT) and the available capacity (C), which have a p-value equal to $`r round(s$coefficients[4,4],4)`$ and $`r round(s$coefficients[6,4],3)`$, respectively. Additionaly, both variables have an high correlation with the total operating cost, as shown in the figure 2. 
 
-<!--
+
 We will now perform a step-wise model selection by AIC on the previous linear model to select the best model. The model found through this method depends on the two variables daily flight time (DFT) and available capacity (C), which corresponds to what has been found previously with the linear regression. This can be explained since these were the only two variables that were significant. Here is the model:
 
-$TOC = \hat{\beta_0} + \hat{\beta_1} \times DFT + \hat{\beta_2} \times C $
 
-$TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C) $
+$TOC = \hat{\beta_0} + \hat{\beta_1} \times DFT + \hat{\beta_2} \times C$
+
+$TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C)$
+
 
 From the initial hypotheses ($H_0: \beta_0 = \beta_{1} = \beta_{2} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $`r final_p_val` < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
-The R-squared values are $R^2 = `r round(final_rsq,2)`$ and adjusted $R^2 = `r round(final_arsq,2)`$ -->
+The R-squared values are $R^2 = `r round(final_rsq,2)`$ and adjusted $R^2 = `r round(final_arsq,2)`$
 
 <!-- Plus le cas:  In the summary of the linear regression, we can see that the variable RTM has the lowest p-value (=0.040 < 0.05). RTM seems to be the variable that can predict the TOC the best. If we look at figure 2, we can confirm that RTM is one of the most important variable to predict TOC because it has the most prominent colored point indicating a strong correlation between the two variables. -->
 
