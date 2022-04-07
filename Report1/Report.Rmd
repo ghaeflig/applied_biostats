@@ -100,12 +100,7 @@ We can see in the left boxplot that the raw data is unequally distributed; it do
 
 
 
-````{r, echo=FALSE}
-data_log <- log(data)
-#data_log[,7] <- data[,7] #REMOVED !
-
-data_log <- data_log[,-c(6,7,9,10)]
-
+```{r, echo=FALSE}
 
 summary_table <- data.frame()
 fivesum <- fivenum(data_log[,1])
@@ -134,23 +129,10 @@ names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
 rownames(summary_table) <- c("Min","1st Q","Median","3rd Q","Max")
 kable(summary_table[,1:7],align='cccccc', caption = "5-numbers summary of the data: Min, 1st quartile, Median, 3rd Quartile and Max of the log variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
-`````
-
-
-
-
-```{r, include=FALSE}
-#Take the log of the data
-library(MASS)
-data_log <- log(data)
-#data_log[,7] <- data[,7] #REMOVED !
-#formula_all <-  data_log$TOC ~ .
-#lm_all <- lm(cost_formula, data=data_log)
-#summary(lm_all)
-#stepAIC(lm_all)
-
-data_log <- data_log[,-c(6,7,9,10)]
 ```
+
+
+
 
 
 ## Univariate numerical
@@ -238,6 +220,14 @@ stepAIC(cost.lm_log)
 final_formula <- data_log$TOC ~ data_log$C + data_log$DFT
 final_lm <- lm(final_formula, data=data_log)
 summary(final_lm)
+
+final_s <- summary(final_lm)
+final_rsq <- final_s$r.squared
+final_arsq <- final_s$adj.r.squared
+final_coeff <- final_lm$coefficients
+final_p_val <-pf(final_s$fstatistic[1], final_s$fstatistic[2], final_s$fstatistic[3], lower.tail = FALSE)
+
+
 ```
 
 # Model fitting 
@@ -269,6 +259,16 @@ kable(corresp_table, caption = "P-values")
 ```
 
 Two features show significant results. These are the daily fight time (DFT) and the available capacity (C), which have a p-value equal to $`r round(s$coefficients[4,4],4)`$ and $`r round(s$coefficients[6,4],3)`$, respectively. Additionaly, both variables have an high correlation with the total operating cost, as shown in the figure 2. 
+
+<!--
+We will now perform a step-wise model selection by AIC on the previous linear model to select the best model. The model found through this method depends on the two variables daily flight time (DFT) and available capacity (C), which corresponds to what has been found previously with the linear regression. This can be explained since these were the only two variables that were significant. Here is the model:
+
+$TOC = \hat{\beta_0} + \hat{\beta_1} \times DFT + \hat{\beta_2} \times C $
+
+$TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C) $
+
+From the initial hypotheses ($H_0: \beta_0 = \beta_{1} = \beta_{2} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $`r final_p_val` < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
+The R-squared values are $R^2 = `r round(final_rsq,2)`$ and adjusted $R^2 = `r round(final_arsq,2)`$ -->
 
 <!-- Plus le cas:  In the summary of the linear regression, we can see that the variable RTM has the lowest p-value (=0.040 < 0.05). RTM seems to be the variable that can predict the TOC the best. If we look at figure 2, we can confirm that RTM is one of the most important variable to predict TOC because it has the most prominent colored point indicating a strong correlation between the two variables. -->
 
@@ -313,6 +313,8 @@ From the same plot, the uncorrelated residues can be assumed because the values 
 Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues. In this model, the points are effectively randomly spread and form a horizontal line. 
 
 Finally, residuals vs. leverage and cook's distance plots allow to identify potential influencor outliers. No airline errors are higher than 1. Central data seems to have a small deviation taht can influence the regression, but it stays reasonable. 
+
+
 
 
 <!-- old description:
