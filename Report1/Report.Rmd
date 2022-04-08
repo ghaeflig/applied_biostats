@@ -154,7 +154,7 @@ summary_table <- rbind(summary_table, madtable)
 names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
 #names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
-kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation (SD) and median absolute deviation (MAD) of the logarithm of the variables variables.") 
+kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation (SD) and median absolute deviation (MAD) of the logarithm of the variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
@@ -234,7 +234,7 @@ final_p_val <-pf(final_s$fstatistic[1], final_s$fstatistic[2], final_s$fstatisti
 
 # Model fitting 
 
-According to the summary, the equation of our regression model is the following: 
+According to the summary of the linear model, the equation of our regression model is the following: 
 
 $TOC = \hat{\beta_0} + \hat{\beta_1} \times FL + \hat{\beta_2} \times SoP + \hat{\beta_3} \times DFT + \hat{\beta_4} \times PS + \hat{\beta_5} \times C + \hat{\beta_{6}} \times AA$
 
@@ -258,14 +258,14 @@ features <- c("Intercept", "FL", "SoP", "DFT", "PS", "C", "AA")
 coeffs <- c(s$coefficients[,4])
 corresp_table <- matrix(c(features, round(coeffs,2)),ncol=7,byrow=TRUE)
 
-kable(corresp_table, caption = "P-values")
+kable(corresp_table, caption = "P-values for the linear model")
 
 ```
 
-Two features show significant results. These are the daily fight time (DFT) and the available capacity (C), which have a p-value equal to $`r round(s$coefficients[4,4],4)`$ and $`r round(s$coefficients[6,4],3)`$, respectively. Additionaly, both variables have an high correlation with the total operating cost, as shown in the figure 2. 
+Two factors show significant results: the daily fight time (DFT) and the available capacity (C), which have a p-value equal to $`r round(s$coefficients[4,4],4)`$ and $`r round(s$coefficients[6,4],4)`$, respectively. Additionally, both variables have an high correlation with the total operating cost, as shown in the figure 2. 
 
 
-We will now perform a step-wise model selection by AIC on the previous linear model. The best model found through this method depends on the two variables daily flight time (DFT) and available capacity (C), which corresponds to what has been found previously with the linear regression. This can be explained since these were the only two variables that were significant. Here is the model:
+A step-wise model selection by AIC was also performed on the previous linear model. The best model found through this method depends on the two variables: daily flight time (DFT) and available capacity (C). This correlates to what has been found previously with the linear regression. Here is the model:
 
 
 $TOC = \hat{\beta_0} + \hat{\beta_1} \times DFT + \hat{\beta_2} \times C$
@@ -276,7 +276,7 @@ The R-squared values are $R^2 = `r round(final_rsq,2)`$ and adjusted $R^2 = `r r
 
 From the initial hypotheses ($H_0: \beta_0 = \beta_{1} = \beta_{2} = 0$ and $H_1:$ at least one non-zero parameter), the p-value is equal to $`r final_p_val` < \alpha = 0.05$. The null hypothesis is therefore rejected and we know that at least one coefficient does play a role in predicting the dependent variable. 
 
-The p-values of the different features for our final model are smaller ; they are even close to 0. It confirms the fact that the final model give better results than the previous one ; it has smaller p-values, a greater adjusted R-squared, a lower AIC.
+The p-values of the different features for our final model are smaller, they are close to 0. It confirms the hypothesis that the final model give better results than the one taking all variables into account ; it has smaller p-values, a greater adjusted R-squared, a lower AIC.
 
 ```{r, echo=FALSE}
 #features <- c("Intercept", "DFT", "C")
@@ -294,7 +294,7 @@ The p-values of the different features for our final model are smaller ; they ar
 
 # Model assessment
 
-```{r, echo=FALSE, fig.cap = "Residual analysis."}
+```{r, echo=FALSE, fig.cap = "Residual analysis.", message=FALSE, warning=FALSE}
 #layout(matrix(1:6,ncol=3))
 #plot(cost.lm, which = c(1,2,3,4,5,6) )   #bad results !!
 
@@ -305,11 +305,12 @@ The p-values of the different features for our final model are smaller ; they ar
 layout(matrix(1:6,ncol=3))
 plot(final_lm, which = c(1,2,3,4,5,6), cex.caption=0.7, cex.id=0.7)
 #hist(cost.lm_log$resid, main="Histogram of Residuals", ylab="Residuals") #histogramme des résidues
+```
 
+```{r, include=FALSE}
 library(lmtest) 
 #dwtest(cost.lm_log) #Test pour la correlation... 
 bptest(final_lm) #test homoscedacity
-
 
 ```
 
@@ -325,15 +326,15 @@ Assumptions (from report criteria):
 https://data.library.virginia.edu/diagnostic-plots/ 
 https://www.andrew.cmu.edu/user/achoulde/94842/lectures/lecture09/lecture09-94842.html -->
 
-From these different plots, the residuals can be evaluated. Many assumptions must be controlled.
-Firstly, the normal QQ plot illustrates the normal distribution. In this case, despite the central airlines' data, the standardized residuals are mostly aligned on the theoretical straight line. This confirms that the errors follow a normal distribution. 
+From the different plots seen in figure 4, the residuals can be evaluated. However, many assumptions must be controlled.
+Firstly, the normal QQ-plot illustrates whether our data follows a normal distribution. In this case, despite the central airlines' data, the standardized residuals are mostly aligned on a straight line. This confirms that the errors follow a normal distribution. 
 
-The second assumption is that the errors have a mean equal to zero. This can be observed on the residuals vs. fitted plot. Indeed, the residual values are located around 0 with a small variation. This observation means that no non-linear relationship are present in the fitted model. 
-From the same plot, the uncorrelated residues can be assumed because the values appear randomly plotted, the red line is horizontal, and no trend is observable.
+The second assumption is that the errors have a mean equal to zero. This can be observed on the residuals vs. fitted plot. The data of our residual values are located around 0 with a small variation. This observation means that no non-linear relationship are present in the fitted model. 
+From the same plot, uncorrelated residues can be assumed because the values appear to be randomly plotted, the red line is horizontal, and no trend is observable.
 
-Concerning the homoscedastic property, the scale-location plot helps to determine it. Indeed, a horizontal line affirms the homoscedasticity of the residues and determines if non-linearity is present. In this model, despite the last point which causes a descending slope, the points are generally randomly spread and form an almost horizontal line. To confirm the homoscedascity, the Breusch-pagan test can be used. This confirms it by indicating a non-significant p-value: the null hypothesis suggesting homoscedacity cannot be rejected.   
+Concerning the homoscedastic property, the scale-location plot helps us determine it. Indeed, a horizontal line proves the homoscedasticity of the residues and determines whether non-linearity is present. In this model, despite the last point which causes a descending slope, the points are generally randomly spread and form an almost horizontal line. To confirm the homoscedascity, the Breusch-Pagan test can be used. The p-value being 0.5127 > 0.05, it appears to be non-significant: therfore, the null hypothesis suggesting homoscedacity cannot be rejected.   
 
-Finally, residuals vs. leverage and Cook's distance plots allow to identify potential outliers. No airline errors have a cook's distance higher than 0.4. That means no outliers are observable in this model. 
+Finally, the residuals vs. leverage plot and the Cook's distance plot allow to identify potential outliers. No airline errors have a Cook's distance higher than 0.4. This means that no outliers are observable in this model. 
 
 
 
@@ -352,8 +353,11 @@ Residuals vs. leverage allows to identify potential influencor outliers. We can 
 <!--# Final estimated model -->
 
 
-# Conclusions
-In conclusion, to get the best linear model, we first remove the factors that were dependent. Then, we took the log of the data and we found the best model by AIC selection. At the end, we verified that the usual statistic assumptions. So, our final model to predict TOC is  $TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C)$ with a p-value equal to $`r final_p_val` < \alpha = 0.05$ and an adjusted $R^2 = `r round(final_arsq,2)`$.
+# Conclusion
+In conclusion, to get the best linear model, we first need to remove the factors that are dependent from each other. Then, given that our data lies on a great magnitude, we take the log of the data to avoid bias in the regression. We find the best model by performing an AIC selection. The model is further confirmed by applying a linear model on the dataset and by verifying whether the variables with a significant p-value correlates with the AIC model. To finish, the usual statistic assumptions are verified.
+
+Our final model to predict TOC only depends on DFT and C; it is summarized here.  
+$TOC = `r round(final_coeff[1],2)` + (`r round(final_coeff[2],2)` \times DFT) + (`r round(final_coeff[3],2)` \times C)$ with a p-value equal to $`r final_p_val` < \alpha = 0.05$ and an adjusted $R^2 = `r round(final_arsq,2)`$.
 
 
 
