@@ -42,8 +42,8 @@ library(readr)
 <!-- (brief statement of scientific question:) -->
 This project aims to explore the relationships between airline costs and multiple factors enumerated down below. This will be done through regression analysis.
 <!-- (all variables defined:) -->
-The data set consists of 11 variables extracted from 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
-Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile (RTM) divided by the ton-mile load factor (LF), and the adjusted assets are equal to the difference between the total assets (TA) and the investments and special funds (I). Therefore, due these dependencies, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. 
+The data set was taken from Jesse W. Proctor et al. [A Regression Analysis of Airline Costs, 21 J. AIR L. & COM. 282 (1954)] and consists of 11 variables extracted from 31 airlines. The dependent variable y is the total operating costs (TOC). Its unit of measurement is cents per revenue ton-mile. In order to model the TOC, the following 10 variables were analyzed: the length of the flight, the speed of the plane, the daily flight time, the metropolitan population served, the revenue tons per aircraft mile, the ton-mile load factor, the available capacity, the total assets, the investments and special funds, and the adjusted assets. 
+Two variables were determined by other variables: the available capacity corresponds to the revenue tons per aircraft mile (RTM) divided by the ton-mile load factor (LF), and the adjusted assets are equal to the difference between the total assets (TA) and the investments and special funds (I). Therefore, due to these dependencies, RTM, LF, TA and I were removed for the following analysis. Only six independent variables (FL, SoP, DFT, PS, C, AA) were analyzed to predict the total operating cost (TOC). 
 
 ```{r, echo=FALSE}
 abb <- c("FL", "SoP", "DFT", "PS", "TOC", "RTM", "LF", "C", "TA", "I", "AA")
@@ -95,7 +95,7 @@ boxplot(data_log, las=2, main='Boxplots of the log of the data')
 ```
 
 
-We can see in the left boxplot that the raw data is unequally distributed; it has very different factors magnitude values. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight and thereby lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. From there, keep in mind that each time we cite a factor name it is the log of it. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
+We can see in the left boxplot that the raw data is unequally distributed; there are very different magnitude values between each factor. This causes an issue when building a model because some factors, due to the fact that they have bigger values, can hold a non-realistic weight which would lead to a biased regression. In order to get the data in the same order of magnitude, we decided to take the logarithm of each variable. From here onward, each time the paper will cite a factor's name, it will in fact be the logarithm of said factor. <!-- except for the LF variable. This variable already has a low magnitude (mean=0.48) and is therefore within the range of magnitude of the transformed variables. -->
 <!--Moreover, due dependencies explained in the introduction, RTM, LF, TA and I are removed for the following analysis. In this manner, six independent variables are used to explained the total operating cost. -->
 
 <br /> 
@@ -127,7 +127,7 @@ summary_table <- rbind(summary_table, maxtable)
 names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
 #names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Min","1st Q","Median","3rd Q","Max")
-kable(summary_table[,1:7],align='cccccc', caption = "5-numbers summary of the data: Min, 1st quartile, Median, 3rd Quartile and Max of the log variables.") 
+kable(summary_table[,1:7],align='cccccc', caption = "5-numbers summary of the data: Min, 1st Quartile, Median, 3rd Quartile and Max of the log variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
@@ -154,7 +154,7 @@ summary_table <- rbind(summary_table, madtable)
 names(summary_table) <- c("FL", "SoP", "DFT", "PS", "TOC", "C", "AA")
 #names(summary_table) <- c("Length of flight", "Speed of plane", "Daily flight time", "Population served", "Total operating cost", "Revenue tons per aircraft mile", "Ton-mile load factor", "Available Cacity", "Total assets", "Investments and special funds", "Adjusted assets")
 rownames(summary_table) <- c("Mean", "SD", "MAD")
-kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation (SD) and median absolute deviation (MAD) of the variables.") 
+kable(summary_table[,1:7],align='cccccc', caption = "Mean, standard deviation (SD) and median absolute deviation (MAD) of the logarithm of the variables variables.") 
 #kable(summary_table[,6:11],align='ccccccc')
 ```
 
@@ -184,17 +184,17 @@ corrplot(data_cor_log)
 
 
 
-This diagram demonstrates the correlation between each feature. The color blue illustrates a positive correlation, whereas the color red shows a negative correlation. Negative correlations are visible between the total operating costs and the six other variables. The TOC seems to decrease when the other factors increase. The correlation between the total operating cost and the population served is lower. 
+This diagram demonstrates the correlation between each feature. The bluecolor  illustrates a positive correlation, whereas the red color shows a negative correlation. Negative correlations are visible between the total operating costs and the six other variables. The TOC seems to decrease when the other factors increase. The correlation between the total operating cost and the population served is lower compared to the rest of the variables. 
 
 <br />  
 
 ## Bivariate graphical 
 
-This graphics demonstrates some linear relationships between two features like between FL and SoP or FL and AA because we observe almost in a straight line between these two factors. We can observe than between TOC and other factors no good straight line appear; it means that we will probably need more than one factor to best predict TOC linearly.
+This graphics demonstrates shows the scatter plots between each variable. We can find some clear linear relationships between certain features such as between FL and SoP or FL and AA. This can be concluded because we can observe see that the points almost form a straight line between these two factors. We can observe that between TOC and other factors, there are not any straight line; it means that we will need more than one factor to best predict TOC linearly.
 
 \newpage
 
-```{r, fig.width=5, fig.height =5, echo=FALSE, fig.cap="Bivariate scatter plots for every relations."}
+```{r, fig.width=5, fig.height =5, echo=FALSE, fig.cap="Bivariate scatter plots for each possible interaction"}
 pairs(data_log)
 #It seems to have more correlation when taking the log of the data ; more straight lines
 ```
