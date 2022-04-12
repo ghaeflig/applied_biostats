@@ -1,5 +1,5 @@
 ---
-title: 'Project 2: statistical critique of a published paper'
+title: '\vspace{-1.5cm} Project 2: statistical critique of a published paper'
 output:
   pdf_document:
     fig_caption: yes
@@ -12,12 +12,13 @@ header-includes:
 - \usepackage{fancyhdr}
 - \usepackage{caption}
 - \pagestyle{fancy}
-- \fancyhead[L]{Report 1}
+- \fancyhead[L]{Report 2}
 - \fancyhead[R]{Monney, Haefliger, Franca, Ferrisse}
 fontsize: 12pt
 params:
   figwidth: 5
 ---
+
 ```{r, setup, include=FALSE}
 # HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installation.html
 # https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html
@@ -29,7 +30,6 @@ params:
 ```{=latex}
 \thispagestyle{fancy}
 ```
-
 ```{r, include=FALSE}
 library(ggplot2)
 library(png)
@@ -37,14 +37,19 @@ library(knitr)
 library(readr)
 ```
 
+```{=html}
 <!--
 1. Briefly give the biomedical background for the paper. What question/hypothesis is being investigated? 
   - What question(s) does the study address?
   - Is the study exploratory or confirmatory?
 -->
-  
+```
+\vspace{-1.5cm}
 
+The investigated paper analyzes survival rates in stage I-III small-cell lung cancer (SCLC) patients who have and have not undergone surgery. Although this method was a standard treatment for SCLC at one time, it was partially abandoned in favor of chemotherapy and radiation therapy following studies conducted in the 1970s. If performing surgery does indeed lead to higher survival rates, it should be considered again in the treatment of SCLC. \
+More specifically, the following questions are investigated in the study: a) Do patients who have undergone surgery have a higher overall and lung-cancer specific survival rate than those who did not? b) What is the most efficient method among lobectomy, resection and pneumonectomy? c) Does post-operatory radiotherapy (PORT) improve survival compared to surgery alone?
 
+```{=html}
 <!-- 
 2. What data are collected (include how many individuals, what variables)? 
   - Is this study an experiment or an observational study (who decides who gets the treatment)?
@@ -55,9 +60,8 @@ library(readr)
   - What is the experimental design?
   - Are data values measured or self-reported?
 -->
-
-
-
+```
+```{=html}
 <!-- 
 3. What analyses were carried out? Are these analyses appropriate for the problem? 
   - (If controlled experiment) Is the experiment run blind? Double-blind?
@@ -70,29 +74,27 @@ procedure?)
 by the study?
   - How are the data analyzed? Is the analysis appropriate for the design?
 -->
+```
+As the researchers start with a very clear hypothesis (surgery does enhance survival rates in SCLC patients), this study is confirmatory rather than exploratory.
 
-
-
-
+```{=html}
 <!-- 
 4. What other analyses should have been done (or might have been done but not shown)? Explain.
   - What confounding factors may be involved?
   - Are any confounding factors controlled for?
 -->
-
-
-
+```
+```{=html}
 <!-- 
 5. Is there any mention of power of the analyses? How would you go about trying to estimate power? 
   - Is there adequate power? Is the sample size appropriate for the stated aims?
 -->
-
-
-
+```
+```{=html}
 <!--
 6. What conclusions do the authors draw? Are these conclusions substantiated by the results? Explain 
   - Does the study adequately address the question(s) it attempts to answer? (Can the question(s)
 possibly be answered by this study?) 
   - In light of your answers to the above, does the evidence support the conclusions?
 -->
-
+```
