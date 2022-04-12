@@ -1,0 +1,98 @@
+---
+title: 'Project 2: statistical critique of a published paper'
+output:
+  pdf_document:
+    fig_caption: yes
+    latex_engine: pdflatex
+  html_document:
+    df_print: paged
+geometry: margin=2.5cm
+papersize: a4
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage{caption}
+- \pagestyle{fancy}
+- \fancyhead[L]{Report 1}
+- \fancyhead[R]{Monney, Haefliger, Franca, Ferrisse}
+fontsize: 12pt
+params:
+  figwidth: 5
+---
+```{r, setup, include=FALSE}
+# HELP --> https://bookdown.org/yihui/rmarkdown-cookbook/installation.html
+# https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html
+# IMPORTANT: you must run this line in your console: tinytex::install_tinytex()
+#check that you have pandoc installed
+#rmarkdown::find_pandoc()
+```
+
+```{=latex}
+\thispagestyle{fancy}
+```
+
+```{r, include=FALSE}
+library(ggplot2)
+library(png)
+library(knitr)
+library(readr)
+```
+
+<!--
+1. Briefly give the biomedical background for the paper. What question/hypothesis is being investigated? 
+  - What question(s) does the study address?
+  - Is the study exploratory or confirmatory?
+-->
+  
+
+
+<!-- 
+2. What data are collected (include how many individuals, what variables)? 
+  - Is this study an experiment or an observational study (who decides who gets the treatment)?
+  - What is the ‘treatment’? (Is there a treatment?) How many treatments are there?
+  - Is there a control group? Is a placebo used for the control group?
+  
+  - What are the experimental units?
+  - What is the experimental design?
+  - Are data values measured or self-reported?
+-->
+
+
+
+<!-- 
+3. What analyses were carried out? Are these analyses appropriate for the problem? 
+  - (If controlled experiment) Is the experiment run blind? Double-blind?
+  -  (If controlled experiment) Is the experiment randomized? (Is the assignment to the treatment
+group or control group governed by a chance procedure, rather than by judgement or a haphazard
+procedure?) 
+  - What potential sources of bias are there?
+  - Is the study exploratory or confirmatory?
+  - Are the statistical hypotheses articulated before the study is carried out, or are they suggested
+by the study?
+  - How are the data analyzed? Is the analysis appropriate for the design?
+-->
+
+
+
+
+<!-- 
+4. What other analyses should have been done (or might have been done but not shown)? Explain.
+  - What confounding factors may be involved?
+  - Are any confounding factors controlled for?
+-->
+
+
+
+<!-- 
+5. Is there any mention of power of the analyses? How would you go about trying to estimate power? 
+  - Is there adequate power? Is the sample size appropriate for the stated aims?
+-->
+
+
+
+<!--
+6. What conclusions do the authors draw? Are these conclusions substantiated by the results? Explain 
+  - Does the study adequately address the question(s) it attempts to answer? (Can the question(s)
+possibly be answered by this study?) 
+  - In light of your answers to the above, does the evidence support the conclusions?
+-->
+
