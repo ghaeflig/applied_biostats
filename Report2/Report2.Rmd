@@ -75,7 +75,13 @@ by the study?
   - How are the data analyzed? Is the analysis appropriate for the design?
 -->
 ```
+
 As the researchers start with a very clear hypothesis (surgery does enhance survival rates in SCLC patients), this study is confirmatory rather than exploratory.
+
+They are mainly interested in the surgical treatment in comparison to non-surgical treatments. Concerning the question a) and b), the control group has not undergone any surgery. To answer to the question c), the control group only had surgery without PORT treatment.
+The experiment is retrospective that means they collected previous data. Therefore, no randomization was performed to classify and select the participants. They selected 4,780 patients diagnosed from 2004 to 2014 with stage I to III SCLC, excluding N3 and Nx patients. They were not blind, all patients know which treatments they got because of the retrospective process. 
+
+The experimental unit is the subject. 
 
 ```{=html}
 <!-- 
