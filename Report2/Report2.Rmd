@@ -49,6 +49,9 @@ library(readr)
 The investigated paper analyzes survival rates in stage I-III small-cell lung cancer (SCLC) patients who have and have not undergone surgery. Although this method was a standard treatment for SCLC at one time, it was partially abandoned in favor of chemotherapy and radiation therapy following studies conducted in the 1970s. If performing surgery does indeed lead to higher survival rates, it should be considered again in the treatment of SCLC. \
 More specifically, the following questions are investigated in the study: a) Do patients who have undergone surgery have a higher overall and lung-cancer specific survival rate than those who did not? b) What is the most efficient method among lobectomy, resection and pneumonectomy? c) Does post-operatory radiotherapy (PORT) improve survival compared to surgery alone?
 
+
+
+
 ```{=html}
 <!-- 
 2. What data are collected (include how many individuals, what variables)? 
@@ -68,20 +71,23 @@ More specifically, the following questions are investigated in the study: a) Do 
   -  (If controlled experiment) Is the experiment randomized? (Is the assignment to the treatment
 group or control group governed by a chance procedure, rather than by judgement or a haphazard
 procedure?) 
-  - What potential sources of bias are there?
-  - Is the study exploratory or confirmatory?
+  - What potential sources of bias are there? ok
+  - Is the study exploratory or confirmatory? ok
   - Are the statistical hypotheses articulated before the study is carried out, or are they suggested
-by the study?
-  - How are the data analyzed? Is the analysis appropriate for the design?
+by the study? ok
+  - How are the data analyzed? ok
+  - Is the analysis appropriate for the design? ~~~~
 -->
 ```
-
-As the researchers start with a very clear hypothesis (surgery does enhance survival rates in SCLC patients), this study is confirmatory rather than exploratory.
 
 They are mainly interested in the surgical treatment in comparison to non-surgical treatments. Concerning the question a) and b), the control group has not undergone any surgery. To answer to the question c), the control group only had surgery without PORT treatment.
 The experiment is retrospective that means they collected previous data. Therefore, no randomization was performed to classify and select the participants. They selected 4,780 patients diagnosed from 2004 to 2014 with stage I to III SCLC, excluding N3 and Nx patients. They were not blind, all patients know which treatments they got because of the retrospective process. 
 
 The experimental unit is the subject. 
+
+There are potential sources of bias because of inherent selection that is difficult to avoid with a retrospective study. Another problem is the fact that chemotherapy information was incomplete and not explicit. Moreover, PORT represented subjects had surgery in other sites that were not analyze in this study. The statistical hypotheses are articulated before the study is carried out ; they are not suggested by the study. Many other researches were done on this topic, but here there is something new in this study : they analyzed patients that did not undergo chemotherapy before. Hence, as there were many past studies and the researchers start with a very clear hypothesis (surgery does enhance survival rates in SCLC patients), this study is confirmatory rather than exploratory.
+
+SPSS software was used to analyze the data. First, they used the Pearson's chi-squared test and Fisher's exact probability to investigate differences between qualitative data of surgery and no-surgery groups. They, they used the Kaplan-Meier method to evaluate overall survival (OS) and lung-cancer-specific survival (LCSS) that were then compared with log-rank test. Finally, they estimated OS and LCSS hazard ratios for prognostic factors (age, gender, race and neoplastic grade) using the Cox proportional hazard model in order to identify the relevant survival variables. They fixed p-value < 0.05 to be statically significant. The analysis seem to be appropriate for this study. 
 
 ```{=html}
 <!-- 
