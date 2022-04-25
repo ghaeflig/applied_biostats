@@ -46,12 +46,12 @@ library(readr)
 ```
 \vspace{-1.5cm}
 
-The investigated paper analyzes survival rates in stage I-III small-cell lung cancer (SCLC) patients who have and have not undergone surgery. Although this method was a standard treatment for SCLC at one time, it was partially abandoned in favor of chemotherapy and radiation therapy following studies conducted in the 1970s. If performing surgery does indeed lead to higher survival rates, it should be considered again in the treatment of SCLC. \
+The investigated paper analyzes survival rates in stage I-III small-cell lung cancer (SCLC) patients who have and have not undergone surgery. Although this method was a standard treatment for SCLC in the past, it was partially abandoned in favor of chemotherapy and radiation therapy following studies conducted in the 1970s. If performing surgery does indeed lead to higher survival rates, it should be considered again in the treatment of SCLC. \
 More specifically, the following questions are investigated in the study: a) Do patients who have undergone surgery have a higher overall and lung-cancer specific survival rate than those who did not? b) What is the most efficient method among lobectomy, resection and pneumonectomy? c) Does post-operatory radiotherapy (PORT) improve survival compared to surgery alone?
 
 ```{=html}
 <!-- 
-2. What data are collected (include how many individuals, what variables)? 
+2. What data are collected (include how many individuals, what variables)? ok
   - Is this study an experiment or an observational study (who decides who gets the treatment)? ok
   - What is the ‘treatment’? (Is there a treatment?) How many treatments are there? ok
   - Is there a control group? Is a placebo used for the control group? ok
@@ -61,8 +61,8 @@ More specifically, the following questions are investigated in the study: a) Do 
   - Are data values measured or self-reported?
 -->
 ```
-The study mainly focuses on the surgical treatment compared to non-surgical treatments. Concerning the questions a) and b), the control group has not undergone any surgery. To answer question c), the control group has only had surgery without PORT treatment.
-This is a retrospective experiment, which means that they have collected data.from previous experiments. Therefore, no randomization was performed to classify and select the participants. They selected 4,780 patients diagnosed from 2004 to 2014 with stage I to III SCLC, excluding N3 and Nx patients. It was not a blind experiment; all patients knew which treatments they got. 
+The study mainly focuses on surgical treatments compared to non-surgical treatments. Concerning questions a) and b), the control group has not undergone any surgery. To analyze question c), the control group has only had surgery without PORT treatment.
+This is a retrospective experiment, which means that they have collected data from previous experiments. Therefore, no randomization was performed to classify and select the participants. They selected 4,780 patients diagnosed from 2004 to 2014 with stage I to III SCLC, excluding N3 and Nx patients. It was not a blind experiment; all patients knew which treatments they got. The experimental units here are each individual patients. 
 ```{r, echo=FALSE}
 stage <- c(" ", "Stage I", "Stage II", "Stage III")
 space <- c("","","","")
@@ -73,7 +73,7 @@ corresp_table <- matrix(data = c(stage,space,sur, nosur), nrow = 4, ncol = 4)
 kable(corresp_table, align='lcr', caption = "Details of variables")
 ```
 
-The experimental unit is the subject. 
+
 
 ```{=html}
 <!-- 
@@ -91,9 +91,9 @@ by the study? ok
 -->
 ```
 
-There are potential sources of bias because of inherent selection that is difficult to avoid with a retrospective study. Another problem is the fact that chemotherapy information was incomplete and not explicit. Moreover, PORT represented subjects had surgery in other sites that were not analyze in this study. The statistical hypotheses are articulated before the study is carried out ; they are not suggested by the study. Many other researches were done on this topic, but here there is something new in this study : they analyzed patients that did not undergo chemotherapy before. Hence, as there were many past studies and the researchers start with a very clear hypothesis (surgery does enhance survival rates in SCLC patients), this study is confirmatory rather than exploratory.
+There are potential sources of bias due to the inherent selection that is difficult to avoid with a retrospective study. Another problem is the fact that chemotherapy information was incomplete and not explicit. Moreover, PORT represented subjects had surgery in other sites that were not analyzed in this study. The statistical hypotheses are articulated before the study is carried out ; they are not suggested by the study. Many other researches were done on this topic, but here there is something new in this study : they analyzed patients that had not undergone chemotherapy before. Hence, as many past studies already existed on this topic, the researchers of this study started with a very clear hypothesis (surgery does enhance survival rates in SCLC patients). This study is confirmatory rather than exploratory.
 
-SPSS software was used to analyze the data. First, they used the Pearson's chi-squared test and Fisher's exact probability to investigate differences between qualitative data of surgery and no-surgery groups. They, they used the Kaplan-Meier method to evaluate overall survival (OS) and lung-cancer-specific survival (LCSS) that were then compared with log-rank test. Finally, they estimated OS and LCSS hazard ratios for prognostic factors (age, gender, race and neoplastic grade) using the Cox proportional hazard model in order to identify the relevant survival variables. They fixed p-value < 0.05 to be statically significant. The analysis seem to be appropriate for this study. 
+SPSS software was used to analyze the data. First, they used the Pearson's chi-squared test and Fisher's exact probability to investigate differences between qualitative data of surgery and no-surgery groups. Then, they used the Kaplan-Meier method to evaluate overall survival (OS) and lung-cancer-specific survival (LCSS) that were then compared with log-rank test. Finally, they estimated OS and LCSS hazard ratios for prognostic factors (age, gender, race and neoplastic grade) using the Cox proportional hazard model in order to identify the relevant survival variables. They fixed p-value < 0.05 to be statically significant. The analysis seem to be appropriate for this study. 
 
 ```{=html}
 <!-- 
@@ -102,14 +102,19 @@ SPSS software was used to analyze the data. First, they used the Pearson's chi-s
   - Are any confounding factors controlled for?
 -->
 ```
-
+Though the sample size is very large, the patients do not show a lot of diversity. Most of them (86.5%) are white and a majority (77.8%) are over 65 years old. These variables could be confounding and do not project a fair prediction of the entire population. 
+Most of the neoplastic grading was labeled as unknown (63.3%). There is a lack of precision in the data here and drawing a conclusion from such variable could be meaningless.
+Only 92 patients (1.9%) had undergone PORT, which is not a large enough sample size to answer c). Therefore, any conclusions made on post-operatory radiotherapy in this paper should be analysed with caution.
+Other causes of death should also be evaluated; since most of the patients are over 65 years old, it should be taken into account that some of the patients have died of age (or other diseases) and not due to cancer. To control this confounding factor, researchers could have tracked the lifestyle of the patients and their family health history. 
 ```{=html}
 <!-- 
 5. Is there any mention of power of the analyses? How would you go about trying to estimate power? 
   - Is there adequate power? Is the sample size appropriate for the stated aims?
 -->
 ```
-
+There is no mention of power analysis in this report. However, the study did check whether there was a relationship between categorical variables (surgery vs non-surgery) through the Fisher test and the Pearson test. 
+To measure the effect size of the study, the Cohen's f could have been computed. A large effect size (f) is preferred as it indicates that research finding has practical significance. A large sample size is also preferred because it provides more accurate mean values and identifies outliers. As the confidence level was fixed at 95% in this study, we can assume that a sample size of 4,780 patients should be enough. 
+However, it should be noted that even though the sample size is large, the number of patients who underwent surgery (10.9%) is far smaller than the ones who did not. Similarly, most of the patients were diagnosed with stage III SCLC (72.5%), and among them only 3.3% had surgery. Even though the sample size is large enough, the distribution is not fair enough, and therefore bias could have been introduced this way. 
 ```{=html}
 <!--
 6. What conclusions do the authors draw? Are these conclusions substantiated by the results? Explain 
