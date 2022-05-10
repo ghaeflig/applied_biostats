@@ -44,6 +44,7 @@ library(readr)
   - Is the study exploratory or confirmatory?
 -->
 ```
+
 \vspace{-1.5cm}
 
 The investigated paper analyzes survival rates in stage I-III small-cell lung cancer (SCLC) patients who have and have not undergone surgery. Although this method was a standard treatment for SCLC in the past, it was partially abandoned in favor of chemotherapy and radiation therapy following studies conducted in the 1970s. If performing surgery does indeed lead to higher survival rates, it should be considered again in the treatment of SCLC.\
@@ -61,9 +62,10 @@ More specifically, the following questions are investigated in the study: a) Do 
   - Are data values measured or self-reported?
 -->
 ```
+
 The study mainly focuses on surgical treatments compared to non-surgical treatments. Concerning questions a) and b), the control group has not undergone any surgery. To analyze question c), the control group has only had surgery without PORT treatment. This is a retrospective experiment, which means that they have collected data from previous experiments. Therefore, no randomization was performed to classify and select the participants. They selected 4,780 patients diagnosed from 2004 to 2014 with stage I to III SCLC, excluding N3 and Nx patients. It was not a blind experiment; all patients knew which treatments they got. The experimental units here are each individual patients.
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 stage <- c(" ", "Stage I", "Stage II", "Stage III")
 space <- c("","","","")
 sur <- c("Surgery", "344", "60", "116")
@@ -88,9 +90,10 @@ by the study? ok
   - Is the analysis appropriate for the design? ~~~~
 -->
 ```
+
 There are potential sources of bias due to the inherent selection that is difficult to avoid with a retrospective study. Another problem is the fact that chemotherapy information was incomplete and not explicit. Moreover, PORT represented subjects had surgery in other sites that were not analyzed in this study. The statistical hypotheses are articulated before the study is carried out ; they are not suggested by the study. Many other researches were done on this topic, but here there is something new in this study : they analyzed patients that had not undergone chemotherapy before. Hence, as many past studies already existed on this topic, the researchers of this study started with a very clear hypothesis (surgery does enhance survival rates in SCLC patients). This study is confirmatory rather than exploratory.
 
-SPSS software was used to analyze the data. First, they used the Pearson's chi-squared test and Fisher's exact probability to investigate differences between qualitative data of surgery and no-surgery groups. Then, they used the Kaplan-Meier method to evaluate overall survival (OS) and lung-cancer-specific survival (LCSS) that were then compared with log-rank test. Finally, they estimated OS and LCSS hazard ratios for prognostic factors (age, gender, race and neoplastic grade) using the Cox proportional hazard model in order to identify the relevant survival variables. They fixed p-value \< 0.05 to be statically significant. The analysis seem to be appropriate for this study.
+SPSS software was used to analyze the data. First, they used the Pearson's chi-squared test and Fisher's exact probability to investigate differences between qualitative data of surgery and no-surgery groups. Then, they used the Kaplan-Meier method to evaluate overall survival (OS) and lung-cancer-specific survival (LCSS) that were then compared with log-rank test. Finally, they estimated OS and LCSS hazard ratios for prognostic factors (age, gender, race and neoplastic grade) using the Cox proportional hazard model in order to identify the relevant survival variables. They fixed p-value \< 0.05 to be statically significant. The analysis seems to be appropriate for this study.
 
 ```{=html}
 <!-- 
@@ -99,6 +102,7 @@ SPSS software was used to analyze the data. First, they used the Pearson's chi-s
   - Are any confounding factors controlled for?
 -->
 ```
+
 Though the sample size is very large, the patients do not show a lot of diversity. Most of them (86.5%) are white and a majority (77.8%) are over 65 years old. These variables could be confounding and do not project a fair prediction of the entire population. Most of the neoplastic grading was labeled as unknown (63.3%). There is a lack of precision in the data here and drawing a conclusion from such variable could be meaningless. Only 92 patients (1.9%) had undergone PORT, which is not a large enough sample size to answer c). Therefore, any conclusions made on post-operatory radiotherapy in this paper should be analysed with caution. To control this confounding factor, researchers could have tracked the lifestyle of the patients and their family health history.
 
 ```{=html}
@@ -107,6 +111,7 @@ Though the sample size is very large, the patients do not show a lot of diversit
   - Is there adequate power? Is the sample size appropriate for the stated aims?
 -->
 ```
+
 There is no mention of power analysis in this report. However, the study did check whether there was a relationship between categorical variables (surgery vs non-surgery) through the Fisher test and the Pearson test. To measure the effect size of the study, the Cohen's f could have been computed. A large effect size (f) is preferred as it indicates that research finding has practical significance. A large sample size is also preferred because it provides more accurate mean values and identifies outliers. As the confidence level was fixed at 95% in this study, we can assume that a sample size of 4,780 patients should be enough. However, it should be noted that even though the sample size is large, the number of patients who underwent surgery (10.9%) is far smaller than the ones who did not. Similarly, most of the patients were diagnosed with stage III SCLC (72.5%), and among them only 3.3% had surgery. Even though the sample size is large enough, the distribution is not fair enough, and therefore bias could have been introduced this way.
 
 ```{=html}
@@ -117,4 +122,5 @@ possibly be answered by this study?)
   - In light of your answers to the above, does the evidence support the conclusions?
 -->
 ```
+
 The authors clearly draw the following conclusions: a) Yes, SCLC patients have a higher survival rate following surgery ; b) The most effective surgery is lobectomy ; c) No, PORT does not improve survival compared to surgery alone. While the methods used to obtain the supporting evidence are appropriate, the trustworthiness of the evidence is reduced because of many possible sources of bias mentioned above. In order to get better supporting evidence, a study should be re-conducted with a more diverse and more evenly distributed population.
